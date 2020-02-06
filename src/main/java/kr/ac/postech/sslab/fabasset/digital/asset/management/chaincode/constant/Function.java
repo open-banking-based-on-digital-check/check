@@ -18,8 +18,6 @@ public final class Function {
     public static final String GET_TYPE_FUNCTION_NAME = "getType";
 
     public static final String TOKEN_IDS_OF_FUNCTION_NAME = "tokenIdsOf";
-    public static final String DIVIDE_FUNCTION_NAME = "divide";
-    public static final String DEACTIVATE_FUNCTION_NAME = "deactivate";
     public static final String QUERY_FUNCTION_NAME = "query";
     public static final String QUERY_HISTORY_FUNCTION_NAME = "queryHistory";
 
@@ -31,10 +29,6 @@ public final class Function {
     public static final String ENROLL_TOKEN_TYPE_FUNCTION_NAME = "enrollTokenType";
     public static final String DROP_TOKEN_TYPE_FUNCTION_NAME = "dropTokenType";
     public static final String TOKEN_TYPES_OF_FUNCTION_NAME = "tokenTypesOf";
-    public static final String UPDATE_TOKEN_TYPE_FUNCTION_NAME = "updateTokenType";
     public static final String RETRIEVE_TOKEN_TYPE_FUNCTION_NAME = "retrieveTokenType";
-    public static final String EMROLL_ATTRIBUTE_OF_TOKEN_TYPE_FUNCTION_NAME = "enrollAttributeOfTokenType";
-    public static final String DROP_ATTRIBUTE_OF_TOKEN_TYPE_FUNCTION_NAME = "dropAttributeOfTokenType";
-    public static final String UPDATE_ATTRIBUTE_OF_TOKEN_TYPE_FUNCTION_NAME = "updateAttributeOfTokenType";
     public static final String RETRIEVE_ATTRIBUTE_OF_TOKEN_TYPE_FUNCTION_NAME = "retrieveAttributeOfTokenType";
 }

@@ -74,61 +74,8 @@ public class TokenTypeManager {
         return tokenTypes.get(tokenType);
     }
 
-    public boolean setTokenType(ChaincodeStub stub, String tokenType, Map<String, List<String>> attributes) throws JsonProcessingException {
-        if (!hashTokenType(tokenType)) {
-            return false;
-        }
-
-        tokenTypes.put(tokenType, attributes);
-        stub.putStringState(TOKEN_TYPES, toJSONString());
-        return true;
-    }
-
     public boolean hasAttribute(String tokenType, String attribute) {
         return tokenTypes.get(tokenType).containsKey(attribute);
-    }
-
-    public boolean addAttributeOfTokenType(ChaincodeStub stub, String tokenType, String attribute, String dataType, String initialValue) throws JsonProcessingException {
-        if (!hashTokenType(tokenType)) {
-            return false;
-        }
-
-        if (hasAttribute(tokenType, attribute)) {
-            return false;
-        }
-
-        List<String> pair = new ArrayList<>(Arrays.asList(dataType, initialValue));
-        tokenTypes.get(tokenType).put(attribute, pair);
-        stub.putStringState(TOKEN_TYPES, toJSONString());
-        return true;
-    }
-
-    public boolean removeAttributeOfTokenType(ChaincodeStub stub, String tokenType, String attribute) throws JsonProcessingException {
-        if (!hashTokenType(tokenType)) {
-            return false;
-        }
-
-        if (!hasAttribute(tokenType, attribute)) {
-            return false;
-        }
-
-        tokenTypes.get(tokenType).remove(attribute);
-        stub.putStringState(TOKEN_TYPES, toJSONString());
-        return true;
-    }
-
-    public boolean setAttributeOfTokenType(ChaincodeStub stub, String tokenType, String attribute, List<String> pair) throws JsonProcessingException {
-        if (!hashTokenType(tokenType)) {
-            return false;
-        }
-
-        if (!hasAttribute(tokenType, attribute)) {
-            return false;
-        }
-
-        tokenTypes.get(tokenType).put(attribute, pair);
-        stub.putStringState(TOKEN_TYPES, toJSONString());
-        return true;
     }
 
     public List<String> getAttributeOfTokenType(String tokenType, String attribute) {

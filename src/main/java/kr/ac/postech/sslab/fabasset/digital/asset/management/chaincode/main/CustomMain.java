@@ -2,9 +2,9 @@ package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.main;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.extension.EERC721;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.extension.Extension;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.extension.TokenTypeManagement;
+import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.standard.Default;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.hyperledger.fabric.shim.ResponseUtils;
 
@@ -35,14 +35,6 @@ public class CustomMain extends Main {
 
                 case TOKEN_IDS_OF_FUNCTION_NAME:
                     response = tokenIdsOf(stub, args);
-                    break;
-
-                case DIVIDE_FUNCTION_NAME:
-                    response = divide(stub, args);
-                    break;
-
-                case DEACTIVATE_FUNCTION_NAME:
-                    response = deactivate(stub, args);
                     break;
 
                 case QUERY_FUNCTION_NAME:
@@ -88,24 +80,8 @@ public class CustomMain extends Main {
                     response = tokenTypesOf(stub);
                     break;
 
-                case UPDATE_TOKEN_TYPE_FUNCTION_NAME:
-                    response = updateTokenType(stub, args);
-                    break;
-
                 case RETRIEVE_TOKEN_TYPE_FUNCTION_NAME:
                     response = retrieveTokenType(stub, args);
-                    break;
-
-                case EMROLL_ATTRIBUTE_OF_TOKEN_TYPE_FUNCTION_NAME:
-                    response = enrollAttributeOfTokenType(stub, args);
-                    break;
-
-                case DROP_ATTRIBUTE_OF_TOKEN_TYPE_FUNCTION_NAME:
-                    response = dropAttributeOfTokenType(stub, args);
-                    break;
-
-                case UPDATE_ATTRIBUTE_OF_TOKEN_TYPE_FUNCTION_NAME:
-                    response = updateAttributeOfTokenType(stub, args);
                     break;
 
                 case RETRIEVE_ATTRIBUTE_OF_TOKEN_TYPE_FUNCTION_NAME:
@@ -131,7 +107,7 @@ public class CustomMain extends Main {
         String owner = args.get(0);
         String type = args.get(1);
 
-        return Long.toString(EERC721.balanceOf(stub, owner, type));
+        return Long.toString(Extension.balanceOf(stub, owner, type));
     }
 
     private String tokenIdsOf(ChaincodeStub stub, List<String> args) throws IOException {
@@ -143,7 +119,7 @@ public class CustomMain extends Main {
             }
 
             String owner = args.get(0);
-            tokenIds = EERC721.tokenIdsOf(stub, owner);
+            tokenIds = Default.tokenIdsOf(stub, owner);
         }
         else if (args.size() == 2) {
             if (isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))) {
@@ -152,40 +128,13 @@ public class CustomMain extends Main {
 
             String owner = args.get(0);
             String type = args.get(1);
-            tokenIds = EERC721.tokenIdsOf(stub, owner, type);
+            tokenIds = Extension.tokenIdsOf(stub, owner, type);
         }
         else {
             throw new IllegalArgumentException(String.format(ARG_MESSAGE + "1 or 2"));
         }
 
         return tokenIds.toString();
-    }
-
-    private String divide(ChaincodeStub stub, List<String> args) throws IOException {
-        if (args.size() != 4
-                || isNullOrEmpty(args.get(0))
-                || isNullOrEmpty(args.get(1))
-                || isNullOrEmpty(args.get(2))
-                || isNullOrEmpty(args.get(3))) {
-            throw new IllegalArgumentException(String.format(ARG_MESSAGE, "4"));
-        }
-
-        String tokenId = args.get(0);
-        List<String> newIds = strToList(args.get(1));
-        List<String> values = strToList(args.get(2));
-        String index = args.get(3);
-
-        return Boolean.toString(EERC721.divide(stub, tokenId, newIds, values, index));
-    }
-
-    private String deactivate(ChaincodeStub stub, List<String> args) throws IOException {
-        if (args.size() != 1 || isNullOrEmpty(args.get(0))) {
-            throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1"));
-        }
-
-        String tokenId = args.get(0);
-
-        return Boolean.toString(EERC721.deactivate(stub, tokenId));
     }
 
     private String query(ChaincodeStub stub, List<String> args) throws IOException {
@@ -195,7 +144,7 @@ public class CustomMain extends Main {
 
         String tokenId = args.get(0);
 
-        return EERC721.query(stub, tokenId);
+        return Extension.query(stub, tokenId);
     }
 
     private String queryHistory(ChaincodeStub stub, List<String> args) {
@@ -205,7 +154,7 @@ public class CustomMain extends Main {
 
         String tokenId = args.get(0);
 
-        return EERC721.queryHistory(stub, tokenId).toString();
+        return Extension.queryHistory(stub, tokenId).toString();
     }
 
     private String xMint(ChaincodeStub stub, List<String> args) throws IOException {
@@ -304,21 +253,6 @@ public class CustomMain extends Main {
         return tokenTypes.toString();
     }
 
-    private static String updateTokenType(ChaincodeStub stub, List<String> args) throws IOException {
-        if (args.size() != 3
-                || isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1)) || isNullOrEmpty(args.get(2))) {
-            throw new IllegalArgumentException(String.format(ARG_MESSAGE, "3"));
-        }
-
-        String admin = args.get(0);
-        String type = args.get(1);
-        String attributesStr = args.get(2);
-        Map<String, List<String>> attributes
-                = objectMapper.readValue(attributesStr, new TypeReference<HashMap<String, List<String>>>() {});
-
-        return Boolean.toString(TokenTypeManagement.updateTokenType(stub, admin, type, attributes));
-    }
-
     private String retrieveTokenType(ChaincodeStub stub, List<String> args) throws IOException {
         if (args.size() != 1 || isNullOrEmpty(args.get(0))) {
             throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1"));
@@ -328,51 +262,6 @@ public class CustomMain extends Main {
         Map<String, List<String>> map = TokenTypeManagement.retrieveTokenType(stub, type);
 
         return objectMapper.writeValueAsString(map);
-    }
-
-    private String enrollAttributeOfTokenType(ChaincodeStub stub, List<String> args) throws IOException {
-        if (args.size() != 5
-                || isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1)) || isNullOrEmpty(args.get(2))
-                || isNullOrEmpty(args.get(3)) || isNullOrEmpty(args.get(4))) {
-            throw new IllegalArgumentException(String.format(ARG_MESSAGE, "5"));
-        }
-
-        String admin = args.get(0);
-        String tokenType = args.get(1);
-        String attribute = args.get(2);
-        String dataType = args.get(3);
-        String initialValue = args.get(4);
-
-        return Boolean.toString(TokenTypeManagement.enrollAttributeOfTokenType(stub, admin, tokenType, attribute, dataType, initialValue));
-    }
-
-    private String dropAttributeOfTokenType(ChaincodeStub stub, List<String> args) throws IOException {
-        if (args.size() != 3
-                || isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1)) || isNullOrEmpty(args.get(2))) {
-            throw new IllegalArgumentException(String.format(ARG_MESSAGE, "3"));
-        }
-
-        String admin = args.get(0);
-        String tokenType = args.get(1);
-        String attribute = args.get(2);
-
-        return Boolean.toString(TokenTypeManagement.dropAttributeOfTokenType(stub, admin, tokenType, attribute));
-    }
-
-    private String updateAttributeOfTokenType(ChaincodeStub stub, List<String> args) throws IOException {
-        if (args.size() != 4
-                || isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1)) || isNullOrEmpty(args.get(2))
-                || isNullOrEmpty(args.get(3))) {
-            throw new IllegalArgumentException(String.format(ARG_MESSAGE, "4"));
-        }
-
-        String admin = args.get(0);
-        String tokenType = args.get(1);
-        String attribute = args.get(2);
-        String pairStr = args.get(3);
-        List<String> pair = strToList(pairStr);
-
-        return Boolean.toString(TokenTypeManagement.updateAttributeOfTokenType(stub, admin, tokenType, attribute, pair));
     }
 
     private String retrieveAttributeOfTokenType(ChaincodeStub stub, List<String> args) throws IOException {

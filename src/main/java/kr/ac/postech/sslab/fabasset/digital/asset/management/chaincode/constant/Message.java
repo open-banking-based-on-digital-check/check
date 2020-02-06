@@ -11,10 +11,6 @@ public final class Message {
 
     public static final String NO_DATA_TYPE_MESSAGE = "There is no such data type";
 
-    public static final String DEACTIVATED_MESSAGE = "This token is deactivated";
-
-    public static final String BASE_TYPE_ERROR_MESSAGE = "This function is not supported for 'base' token type";
-
     public static final String NO_TOKEN_TYPE_MESSAGE = "There is no such token type";
 
     public static final String NO_ATTRIBUTE_MESSAGE = "There is no such attribute";
