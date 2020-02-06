@@ -1,7 +1,6 @@
-package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.extension;
+package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.protocol;
 
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.DataType;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Key;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Message;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.main.CustomChaincodeBase;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.TokenManager;

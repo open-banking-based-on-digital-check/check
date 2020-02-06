@@ -1,4 +1,4 @@
-package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.standard;
+package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.protocol.standard;
 
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.main.CustomChaincodeBase;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.TokenManager;

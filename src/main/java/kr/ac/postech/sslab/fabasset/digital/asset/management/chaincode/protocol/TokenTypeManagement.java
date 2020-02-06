@@ -1,4 +1,4 @@
-package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.extension;
+package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.protocol;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

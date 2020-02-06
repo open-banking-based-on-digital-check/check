@@ -1,12 +1,11 @@
 package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.main;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.extension.Extension;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.extension.TokenTypeManagement;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.standard.Default;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.standard.ERC721;
+import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.protocol.Extension;
+import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.protocol.TokenTypeManagement;
+import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.protocol.standard.Default;
+import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.protocol.standard.ERC721;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.hyperledger.fabric.shim.ResponseUtils;
 
