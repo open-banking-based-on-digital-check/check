@@ -5,6 +5,8 @@ import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.TokenTypeManager;
 import org.hyperledger.fabric.shim.ChaincodeBase;
 import org.hyperledger.fabric.shim.ChaincodeStub;
+import org.hyperledger.fabric.shim.ResponseUtils;
+
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +21,7 @@ public class CustomChaincodeBase extends ChaincodeBase {
             String func = stub.getFunction();
 
             if (!func.equals(INIT_FUNCTION_NAME)) {
-                return newErrorResponse(INIT_FUNCTION_MESSAGE);
+                return ResponseUtils.newErrorResponse(INIT_FUNCTION_MESSAGE);
             }
 
             List<String> args = stub.getParameters();
@@ -39,14 +41,14 @@ public class CustomChaincodeBase extends ChaincodeBase {
                 manager.setTokenTypes(stub, tokenTypes);
             }
 
-            return newSuccessResponse();
+            return ResponseUtils.newSuccessResponse();
         } catch (Exception e) {
-            return newErrorResponse(e.getMessage());
+            return ResponseUtils.newErrorResponse(e.getMessage());
         }
     }
 
     @Override
     public Response invoke(ChaincodeStub stub) {
-        return newSuccessResponse();
+        return ResponseUtils.newSuccessResponse();
     }
 }

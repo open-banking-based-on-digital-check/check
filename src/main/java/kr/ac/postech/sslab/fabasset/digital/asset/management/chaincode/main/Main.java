@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.standard.BaseNFT;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.standard.ERC721;
 import org.hyperledger.fabric.shim.ChaincodeStub;
+import org.hyperledger.fabric.shim.ResponseUtils;
 
 import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Function.*;
 import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Message.ARG_MESSAGE;
@@ -64,12 +65,12 @@ public class Main extends CustomChaincodeBase {
                     break;
 
                 default:
-                    return newErrorResponse(NO_FUNCTION_MESSAGE);
+                    return ResponseUtils.newErrorResponse(NO_FUNCTION_MESSAGE);
             }
 
-            return newSuccessResponse(response);
+            return ResponseUtils.newSuccessResponse(response);
         } catch (Exception e) {
-            return newErrorResponse(e.getMessage());
+            return ResponseUtils.newErrorResponse(e.getMessage());
         }
     }
 

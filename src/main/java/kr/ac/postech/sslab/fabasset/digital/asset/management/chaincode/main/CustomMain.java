@@ -6,6 +6,7 @@ import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.extension
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.extension.XNFT;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.extension.XType;
 import org.hyperledger.fabric.shim.ChaincodeStub;
+import org.hyperledger.fabric.shim.ResponseUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -115,9 +116,9 @@ public class CustomMain extends Main {
                     return super.invoke(stub);
             }
 
-            return newSuccessResponse(response);
+            return ResponseUtils.newSuccessResponse(response);
         } catch (Exception e) {
-            return newErrorResponse(e.getMessage());
+            return ResponseUtils.newErrorResponse(e.getMessage());
         }
     }
 
