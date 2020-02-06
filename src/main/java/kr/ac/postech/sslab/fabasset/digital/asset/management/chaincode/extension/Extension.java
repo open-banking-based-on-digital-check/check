@@ -26,89 +26,29 @@ public class Extension extends CustomChaincodeBase {
 
     private static final String BASE_TYPE = "base";
 
-    private static final String QUERY_OWNER = "{\"selector\":{\"owner\":\"%s\"}}";
+    private static final String QUERY_OWNER_AND_TYPE = "{\"selector\":{\"owner\":\"%s\",\"type\":\"%s\"}}";
 
     public static long balanceOf(ChaincodeStub stub, String owner, String type) throws IOException {
-        String query = String.format(QUERY_OWNER, owner);
+        String query = String.format(QUERY_OWNER_AND_TYPE, owner, type);
 
         long ownedTokensCount = 0;
         QueryResultsIterator<KeyValue> resultsIterator = stub.getQueryResult(query);
         while(resultsIterator.iterator().hasNext()) {
-            String tokenId = resultsIterator.iterator().next().getKey();
-            TokenManager nft = TokenManager.read(stub, tokenId);
-
-            boolean activated;
-            if (nft.getType().equals(BASE_TYPE)) {
-                activated = true;
-            }
-            else {
-                activated = (boolean) nft.getXAttr(Key.ACTIVATED_KEY);
-            }
-
-            if (activated && (type.equals("_") || type.equals(nft.getType()))) {
-                ownedTokensCount++;
-            }
+            resultsIterator.iterator().next();
+            ownedTokensCount++;
         }
 
         return ownedTokensCount;
     }
 
     public static List<String> tokenIdsOf(ChaincodeStub stub, String owner, String type) throws IOException {
-        List<String> tokenIds;
-        if (type.equals("_")) {
-            tokenIds = tokenIdsOfForAllActivated(stub, owner);
-        } else {
-            tokenIds = tokenIdsOfForType(stub, owner, type);
-        }
+        String query = String.format(QUERY_OWNER_AND_TYPE, owner, type);
 
-        return tokenIds;
-    }
-
-    private static List<String> tokenIdsOfForAllActivated(ChaincodeStub stub, String owner) throws IOException {
         List<String> tokenIds = new ArrayList<>();
-
-        String query = String.format(QUERY_OWNER, owner);
         QueryResultsIterator<KeyValue> resultsIterator = stub.getQueryResult(query);
         while(resultsIterator.iterator().hasNext()) {
             String tokenId = resultsIterator.iterator().next().getKey();
-            TokenManager nft = TokenManager.read(stub, tokenId);
-
-            boolean activated;
-            if (nft.getType().equals(BASE_TYPE)) {
-                activated = true;
-            } else {
-                activated = (boolean) nft.getXAttr(Key.ACTIVATED_KEY);
-            }
-
-            if (activated) {
-                tokenIds.add(tokenId);
-            }
-        }
-
-        return tokenIds;
-    }
-
-    private static List<String> tokenIdsOfForType(ChaincodeStub stub, String owner, String type) throws IOException {
-        List<String> tokenIds = new ArrayList<>();
-
-        String query = "{\"selector\":{\"owner\":\"" + owner + "\"," +
-                "\"type\":\"" + type + "\"}}";
-
-        QueryResultsIterator<KeyValue> resultsIterator = stub.getQueryResult(query);
-        while (resultsIterator.iterator().hasNext()) {
-            String tokenId = resultsIterator.iterator().next().getKey();
-
-            boolean activated;
-            if (type.equals(BASE_TYPE)) {
-                activated = true;
-            } else {
-                TokenManager nft = TokenManager.read(stub, tokenId);
-                activated = (boolean) nft.getXAttr(Key.ACTIVATED_KEY);
-            }
-
-            if (activated) {
-                tokenIds.add(tokenId);
-            }
+            tokenIds.add(tokenId);
         }
 
         return tokenIds;

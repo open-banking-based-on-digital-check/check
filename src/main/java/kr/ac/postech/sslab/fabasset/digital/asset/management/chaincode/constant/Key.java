@@ -13,9 +13,5 @@ public final class Key {
     public static final String XATTR_KEY = "xattr";
     public static final String URI_KEY = "uri";
 
-    public static final String ACTIVATED_KEY = "activated";
-    public static final String PARENT_KEY = "parent";
-    public static final String CHILDREN_KEY = "children";
-
     public static final String ADMIN_KEY = "_admin";
 }
