@@ -3,7 +3,7 @@ package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.extensio
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.DataType;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Message;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.main.CustomChaincodeBase;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.NFT;
+import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.TokenManager;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.TokenTypeManager;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.util.DataTypeConversion;
 import org.apache.commons.logging.Log;
@@ -18,8 +18,8 @@ import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.co
 import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Message.NO_ATTRIBUTE_MESSAGE;
 import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Message.NO_TOKEN_TYPE_MESSAGE;
 
-public class XNFT extends CustomChaincodeBase {
-    private static final Log LOG = LogFactory.getLog(XNFT.class);
+public class Extension extends CustomChaincodeBase {
+    private static final Log LOG = LogFactory.getLog(Extension.class);
 
     public static boolean mint(ChaincodeStub stub, String tokenId, String type, String owner, Map<String, Object> xattr, Map<String, String> uri) throws IOException {
         TokenTypeManager manager = TokenTypeManager.read(stub);
@@ -45,7 +45,7 @@ public class XNFT extends CustomChaincodeBase {
             return false;
         }
 
-        NFT nft = new NFT();
+        TokenManager nft = new TokenManager();
         return nft.mint(stub, tokenId, type, owner, xattr, uri);
     }
 
@@ -95,7 +95,7 @@ public class XNFT extends CustomChaincodeBase {
     }
 
     public static boolean setURI(ChaincodeStub stub, String tokenId, String index, String value) throws IOException {
-        NFT nft = NFT.read(stub, tokenId);
+        TokenManager nft = TokenManager.read(stub, tokenId);
         Map<String, String> uri = nft.getURI();
         if (!uri.containsKey(index)) {
             return false;
@@ -105,7 +105,7 @@ public class XNFT extends CustomChaincodeBase {
     }
 
     public static String getURI(ChaincodeStub stub, String tokenId, String index) throws IOException {
-        NFT nft = NFT.read(stub, tokenId);
+        TokenManager nft = TokenManager.read(stub, tokenId);
         Map<String, String> uri = nft.getURI();
         if (!uri.containsKey(index)) {
             return null;
@@ -115,7 +115,7 @@ public class XNFT extends CustomChaincodeBase {
     }
 
     public static boolean setXAttr(ChaincodeStub stub, String tokenId, String index, String value) throws IOException {
-        NFT nft = NFT.read(stub, tokenId);
+        TokenManager nft = TokenManager.read(stub, tokenId);
         Map<String, Object> xattr = nft.getXAttr();
         if (!xattr.containsKey(index)) {
             return false;
@@ -136,7 +136,7 @@ public class XNFT extends CustomChaincodeBase {
 
     @SuppressWarnings("unchecked")
     public static String getXAttr(ChaincodeStub stub, String tokenId, String index) throws IOException {
-        NFT nft = NFT.read(stub, tokenId);
+        TokenManager nft = TokenManager.read(stub, tokenId);
         Map<String, Object> xattr = nft.getXAttr();
         if (!xattr.containsKey(index)) {
             return null;

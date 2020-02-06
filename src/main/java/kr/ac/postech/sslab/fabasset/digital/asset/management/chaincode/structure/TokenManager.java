@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class NFT {
+public class TokenManager {
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     private String tokenId;
@@ -20,9 +20,9 @@ public class NFT {
     private Map<String, Object> xattr;
     private Map<String, String> uri;
 
-    public NFT() {}
+    public TokenManager() {}
 
-    private NFT(String tokenId, String type, String owner, String approvee, Map<String, Object> xattr, Map<String, String> uri) {
+    private TokenManager(String tokenId, String type, String owner, String approvee, Map<String, Object> xattr, Map<String, String> uri) {
         this.tokenId = tokenId;
         this.type = type;
         this.owner = owner;
@@ -48,7 +48,7 @@ public class NFT {
     }
 
     @SuppressWarnings("unchecked")
-    public static NFT read(ChaincodeStub stub, String tokenId) throws IOException {
+    public static TokenManager read(ChaincodeStub stub, String tokenId) throws IOException {
         String json = stub.getStringState(tokenId);
 
         Map<String, Object> map =
@@ -64,7 +64,7 @@ public class NFT {
         Map<String, String> uri
                 = map.containsKey(Key.URI_KEY) ? (HashMap<String, String>) map.get(Key.URI_KEY) : null;
 
-        return new NFT(tokenId, type, owner, approvee, xattr, uri);
+        return new TokenManager(tokenId, type, owner, approvee, xattr, uri);
     }
 
     public boolean burn(ChaincodeStub stub, String tokenId) {

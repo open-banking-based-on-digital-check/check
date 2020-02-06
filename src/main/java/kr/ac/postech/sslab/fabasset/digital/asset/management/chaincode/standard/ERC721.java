@@ -1,8 +1,8 @@
 package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.standard;
 
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.main.CustomChaincodeBase;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.NFT;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.OperatorsApproval;
+import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.TokenManager;
+import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.OperatorManager;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.hyperledger.fabric.shim.ledger.KeyValue;
 import org.hyperledger.fabric.shim.ledger.QueryResultsIterator;
@@ -27,12 +27,12 @@ public class ERC721 extends CustomChaincodeBase {
 	}
 
 	public static String ownerOf(ChaincodeStub stub, String tokenId) throws IOException {
-		NFT nft = NFT.read(stub, tokenId);
+		TokenManager nft = TokenManager.read(stub, tokenId);
 		return nft.getOwner();
 	}
 
 	public static boolean transferFrom(ChaincodeStub stub, String from, String to, String tokenId) throws IOException {
-			NFT nft = NFT.read(stub, tokenId);
+			TokenManager nft = TokenManager.read(stub, tokenId);
 
 			String owner = nft.getOwner();
 			if (!from.equals(owner)) {
@@ -45,12 +45,12 @@ public class ERC721 extends CustomChaincodeBase {
 	}
 
 	public static boolean approve(ChaincodeStub stub, String approved, String tokenId) throws IOException {
-		NFT nft = NFT.read(stub, tokenId);
+		TokenManager nft = TokenManager.read(stub, tokenId);
 		return nft.setApprovee(stub, approved);
 	}
 
 	public static boolean setApprovalForAll(ChaincodeStub stub, String caller, String operator, boolean approved) throws IOException {
-		OperatorsApproval approval = OperatorsApproval.read(stub);
+		OperatorManager approval = OperatorManager.read(stub);
 		Map<String, Map<String, Boolean>> operators = approval.getOperatorsApproval();
 
 		Map<String, Boolean> map;
@@ -69,12 +69,12 @@ public class ERC721 extends CustomChaincodeBase {
 	}
 
     public static String getApproved(ChaincodeStub stub, String tokenId) throws IOException {
-		NFT nft = NFT.read(stub, tokenId);
+		TokenManager nft = TokenManager.read(stub, tokenId);
 		return nft.getApprovee();
 	}
 
 	public static boolean isApprovedForAll(ChaincodeStub stub, String owner, String operator) throws IOException {
-		OperatorsApproval approval = OperatorsApproval.read(stub);
+		OperatorManager approval = OperatorManager.read(stub);
 		Map<String, Map<String, Boolean>> operators = approval.getOperatorsApproval();
 
 		if (operators.containsKey(owner)) {

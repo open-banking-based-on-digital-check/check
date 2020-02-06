@@ -11,24 +11,24 @@ import java.util.Map;
 
 import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Key.OPERATORS_APPROVAL;
 
-public class OperatorsApproval {
+public class OperatorManager {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    private OperatorsApproval(Map<String, Map<String, Boolean>> operators) {
+    private OperatorManager(Map<String, Map<String, Boolean>> operators) {
         this.operators = operators;
     }
 
     private Map<String, Map<String, Boolean>> operators;
 
-    public static OperatorsApproval read(ChaincodeStub stub) throws IOException {
+    public static OperatorManager read(ChaincodeStub stub) throws IOException {
         String json = stub.getStringState(OPERATORS_APPROVAL);
         if (json.trim().length() == 0) {
-            return new OperatorsApproval(new HashMap<>());
+            return new OperatorManager(new HashMap<>());
         }
         else {
             Map<String, Map<String, Boolean>> map
                     = objectMapper.readValue(json, new TypeReference<HashMap<String, HashMap<String, Boolean>>>() {});
-            return new OperatorsApproval(map);
+            return new OperatorManager(map);
         }
     }
 

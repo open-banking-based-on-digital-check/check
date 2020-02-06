@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Key;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Message;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.main.CustomChaincodeBase;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.NFT;
+import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.TokenManager;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.TokenTypeManager;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.util.DataTypeConversion;
 
@@ -35,7 +35,7 @@ public class EERC721 extends CustomChaincodeBase {
 		QueryResultsIterator<KeyValue> resultsIterator = stub.getQueryResult(query);
 		while(resultsIterator.iterator().hasNext()) {
 			String tokenId = resultsIterator.iterator().next().getKey();
-			NFT nft = NFT.read(stub, tokenId);
+			TokenManager nft = TokenManager.read(stub, tokenId);
 
 			boolean activated;
 			if (nft.getType().equals(BASE_TYPE)) {
@@ -84,7 +84,7 @@ public class EERC721 extends CustomChaincodeBase {
 		QueryResultsIterator<KeyValue> resultsIterator = stub.getQueryResult(query);
 		while(resultsIterator.iterator().hasNext()) {
 			String tokenId = resultsIterator.iterator().next().getKey();
-			NFT nft = NFT.read(stub, tokenId);
+			TokenManager nft = TokenManager.read(stub, tokenId);
 
 			boolean activated;
 			if (nft.getType().equals(BASE_TYPE)) {
@@ -115,7 +115,7 @@ public class EERC721 extends CustomChaincodeBase {
 			if (type.equals(BASE_TYPE)) {
 				activated = true;
 			} else {
-				NFT nft = NFT.read(stub, tokenId);
+				TokenManager nft = TokenManager.read(stub, tokenId);
 				activated = (boolean) nft.getXAttr(Key.ACTIVATED_KEY);
 			}
 
@@ -133,7 +133,7 @@ public class EERC721 extends CustomChaincodeBase {
 			throw new IndexOutOfBoundsException("Both array 'newIds' and 'values' should have only two elements");
 		}
 
-		NFT nft = NFT.read(stub, tokenId);
+		TokenManager nft = TokenManager.read(stub, tokenId);
 		if (nft.getType().equals(BASE_TYPE)) {
 			LOG.error(Message.BASE_TYPE_ERROR_MESSAGE);
 			return false;
@@ -153,7 +153,7 @@ public class EERC721 extends CustomChaincodeBase {
 			String uriJson = objectMapper.writeValueAsString(nft.getURI());
 			Map<String, String> uri = objectMapper.readValue(uriJson, new TypeReference<HashMap<String, String>>() {});
 
-			NFT child = new NFT();
+			TokenManager child = new TokenManager();
 			child.mint(stub, newIds.get(i), nft.getType(), nft.getOwner(), xattr, uri);
 
 			TokenTypeManager manager = TokenTypeManager.read(stub);
@@ -178,7 +178,7 @@ public class EERC721 extends CustomChaincodeBase {
 	}
 
     public static boolean deactivate(ChaincodeStub stub, String tokenId) throws IOException {
-		NFT nft = NFT.read(stub, tokenId);
+		TokenManager nft = TokenManager.read(stub, tokenId);
 		if (nft.getType().equals(BASE_TYPE)) {
 			LOG.error(Message.BASE_TYPE_ERROR_MESSAGE);
 			return false;
@@ -188,7 +188,7 @@ public class EERC721 extends CustomChaincodeBase {
 	}
 
     public static String query(ChaincodeStub stub, String tokenId) throws IOException {
-		NFT nft = NFT.read(stub, tokenId);
+		TokenManager nft = TokenManager.read(stub, tokenId);
 		return nft.toJSONString();
 	}
 

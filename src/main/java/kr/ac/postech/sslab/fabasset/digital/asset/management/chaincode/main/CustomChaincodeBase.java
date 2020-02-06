@@ -1,7 +1,7 @@
 package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.main;
 
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Message;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.OperatorsApproval;
+import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.OperatorManager;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.TokenTypeManager;
 import org.hyperledger.fabric.shim.ChaincodeBase;
 import org.hyperledger.fabric.shim.ChaincodeStub;
@@ -29,7 +29,7 @@ public class CustomChaincodeBase extends ChaincodeBase {
                 throw new IllegalArgumentException(String.format(Message.ARG_MESSAGE, "0"));
             }
 
-            OperatorsApproval approval = OperatorsApproval.read(stub);
+            OperatorManager approval = OperatorManager.read(stub);
             Map<String, Map<String, Boolean>> operators = approval.getOperatorsApproval();
             if (operators.isEmpty()) {
                 approval.setOperatorsApproval(stub, operators);

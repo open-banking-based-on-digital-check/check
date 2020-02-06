@@ -1,7 +1,7 @@
 package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.main;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.standard.BaseNFT;
+import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.standard.Default;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.standard.ERC721;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.hyperledger.fabric.shim.ResponseUtils;
@@ -163,7 +163,7 @@ public class Main extends CustomChaincodeBase {
         String tokenId = args.get(0);
         String owner = args.get(1);
 
-        return Boolean.toString(BaseNFT.mint(stub, tokenId, owner));
+        return Boolean.toString(Default.mint(stub, tokenId, owner));
     }
 
     private String burn(ChaincodeStub stub, List<String> args) throws IOException {
@@ -173,7 +173,7 @@ public class Main extends CustomChaincodeBase {
 
         String tokenId = args.get(0);
 
-        return Boolean.toString(BaseNFT.burn(stub, tokenId));
+        return Boolean.toString(Default.burn(stub, tokenId));
     }
 
     private String getType(ChaincodeStub stub, List<String> args) throws IOException {
@@ -183,7 +183,7 @@ public class Main extends CustomChaincodeBase {
 
         String tokenId = args.get(0);
 
-        return BaseNFT.getType(stub, tokenId);
+        return Default.getType(stub, tokenId);
     }
 
     public static void main(String[] args) {

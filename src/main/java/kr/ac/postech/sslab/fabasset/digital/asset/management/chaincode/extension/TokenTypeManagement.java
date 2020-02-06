@@ -12,7 +12,7 @@ import java.util.*;
 
 import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.DataType.*;
 
-public class XType extends CustomChaincodeBase {
+public class TokenTypeManagement extends CustomChaincodeBase {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private static void addAttributesAutomatically(String admin, Map<String, List<String>> attributes) {

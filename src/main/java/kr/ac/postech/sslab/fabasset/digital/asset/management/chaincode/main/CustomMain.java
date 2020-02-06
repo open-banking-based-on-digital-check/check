@@ -3,8 +3,8 @@ package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.main;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.extension.EERC721;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.extension.XNFT;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.extension.XType;
+import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.extension.Extension;
+import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.extension.TokenTypeManagement;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.hyperledger.fabric.shim.ResponseUtils;
 
@@ -223,7 +223,7 @@ public class CustomMain extends Main {
         Map<String, String> uri =
                 objectMapper.readValue(args.get(4), new TypeReference<HashMap<String, String>>(){});
 
-        return Boolean.toString(XNFT.mint(stub, tokenId, type, owner, xattr, uri));
+        return Boolean.toString(Extension.mint(stub, tokenId, type, owner, xattr, uri));
     }
 
     private String setURI(ChaincodeStub stub, List<String> args) throws IOException {
@@ -236,7 +236,7 @@ public class CustomMain extends Main {
         String index = args.get(1);
         String value = args.get(2);
 
-        return Boolean.toString(XNFT.setURI(stub, tokenId, index, value));
+        return Boolean.toString(Extension.setURI(stub, tokenId, index, value));
     }
 
     private String getURI(ChaincodeStub stub, List<String> args) throws IOException {
@@ -246,7 +246,7 @@ public class CustomMain extends Main {
         }
         String tokenId = args.get(0);
         String index = args.get(1);
-        return XNFT.getURI(stub, tokenId, index);
+        return Extension.getURI(stub, tokenId, index);
     }
 
     private String setXAttr(ChaincodeStub stub, List<String> args) throws IOException {
@@ -259,7 +259,7 @@ public class CustomMain extends Main {
         String index = args.get(1);
         String value = args.get(2);
 
-        return Boolean.toString(XNFT.setXAttr(stub, tokenId, index, value));
+        return Boolean.toString(Extension.setXAttr(stub, tokenId, index, value));
     }
 
     private String getXAttr(ChaincodeStub stub, List<String> args)  throws IOException {
@@ -271,7 +271,7 @@ public class CustomMain extends Main {
         String tokenId = args.get(0);
         String index = args.get(1);
 
-        return XNFT.getXAttr(stub, tokenId, index);
+        return Extension.getXAttr(stub, tokenId, index);
     }
 
     private String enrollTokenType(ChaincodeStub stub, List<String> args) throws IOException {
@@ -284,7 +284,7 @@ public class CustomMain extends Main {
         String type = args.get(1);
         String json = args.get(2);
 
-        return Boolean.toString(XType.enrollTokenType(stub, admin, type, json));
+        return Boolean.toString(TokenTypeManagement.enrollTokenType(stub, admin, type, json));
     }
 
     private String dropTokenType(ChaincodeStub stub, List<String> args) throws IOException {
@@ -296,11 +296,11 @@ public class CustomMain extends Main {
         String admin = args.get(0);
         String type = args.get(1);
 
-        return Boolean.toString(XType.dropTokenType(stub, admin, type));
+        return Boolean.toString(TokenTypeManagement.dropTokenType(stub, admin, type));
     }
 
     private String tokenTypesOf(ChaincodeStub stub) throws IOException {
-        List<String> tokenTypes = XType.tokenTypesOf(stub);
+        List<String> tokenTypes = TokenTypeManagement.tokenTypesOf(stub);
         return tokenTypes.toString();
     }
 
@@ -316,7 +316,7 @@ public class CustomMain extends Main {
         Map<String, List<String>> attributes
                 = objectMapper.readValue(attributesStr, new TypeReference<HashMap<String, List<String>>>() {});
 
-        return Boolean.toString(XType.updateTokenType(stub, admin, type, attributes));
+        return Boolean.toString(TokenTypeManagement.updateTokenType(stub, admin, type, attributes));
     }
 
     private String retrieveTokenType(ChaincodeStub stub, List<String> args) throws IOException {
@@ -325,7 +325,7 @@ public class CustomMain extends Main {
         }
 
         String type = args.get(0);
-        Map<String, List<String>> map = XType.retrieveTokenType(stub, type);
+        Map<String, List<String>> map = TokenTypeManagement.retrieveTokenType(stub, type);
 
         return objectMapper.writeValueAsString(map);
     }
@@ -343,7 +343,7 @@ public class CustomMain extends Main {
         String dataType = args.get(3);
         String initialValue = args.get(4);
 
-        return Boolean.toString(XType.enrollAttributeOfTokenType(stub, admin, tokenType, attribute, dataType, initialValue));
+        return Boolean.toString(TokenTypeManagement.enrollAttributeOfTokenType(stub, admin, tokenType, attribute, dataType, initialValue));
     }
 
     private String dropAttributeOfTokenType(ChaincodeStub stub, List<String> args) throws IOException {
@@ -356,7 +356,7 @@ public class CustomMain extends Main {
         String tokenType = args.get(1);
         String attribute = args.get(2);
 
-        return Boolean.toString(XType.dropAttributeOfTokenType(stub, admin, tokenType, attribute));
+        return Boolean.toString(TokenTypeManagement.dropAttributeOfTokenType(stub, admin, tokenType, attribute));
     }
 
     private String updateAttributeOfTokenType(ChaincodeStub stub, List<String> args) throws IOException {
@@ -372,7 +372,7 @@ public class CustomMain extends Main {
         String pairStr = args.get(3);
         List<String> pair = strToList(pairStr);
 
-        return Boolean.toString(XType.updateAttributeOfTokenType(stub, admin, tokenType, attribute, pair));
+        return Boolean.toString(TokenTypeManagement.updateAttributeOfTokenType(stub, admin, tokenType, attribute, pair));
     }
 
     private String retrieveAttributeOfTokenType(ChaincodeStub stub, List<String> args) throws IOException {
@@ -383,7 +383,7 @@ public class CustomMain extends Main {
         String tokenType = args.get(0);
         String attribute = args.get(1);
 
-        return XType.retrieveAttributeOfTokenType(stub, tokenType, attribute).toString();
+        return TokenTypeManagement.retrieveAttributeOfTokenType(stub, tokenType, attribute).toString();
     }
 
     private List<String> strToList(String str) {
