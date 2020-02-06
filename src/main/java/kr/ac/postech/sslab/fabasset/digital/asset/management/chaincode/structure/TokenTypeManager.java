@@ -42,7 +42,7 @@ public class TokenTypeManager {
         stub.putStringState(TOKEN_TYPES, toJSONString());
     }
 
-    public boolean hashTokenType(String tokenType) {
+    private boolean hashTokenType(String tokenType) {
         return tokenTypes.containsKey(tokenType);
     }
 
@@ -74,7 +74,7 @@ public class TokenTypeManager {
         return tokenTypes.get(tokenType);
     }
 
-    public boolean hasAttribute(String tokenType, String attribute) {
+    private boolean hasAttribute(String tokenType, String attribute) {
         return tokenTypes.get(tokenType).containsKey(attribute);
     }
 

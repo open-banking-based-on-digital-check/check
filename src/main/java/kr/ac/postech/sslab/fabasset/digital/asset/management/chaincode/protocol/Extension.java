@@ -5,6 +5,7 @@ import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.main.CustomChaincodeBase;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.TokenManager;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.TokenTypeManager;
+import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.user.Address;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.util.DataTypeConversion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -68,7 +69,9 @@ public class Extension extends CustomChaincodeBase {
         return histories;
     }
 
-    public static boolean mint(ChaincodeStub stub, String tokenId, String type, String owner, Map<String, Object> xattr, Map<String, String> uri) throws IOException {
+    public static boolean mint(ChaincodeStub stub, String tokenId, String type, Map<String, Object> xattr, Map<String, String> uri) throws IOException {
+        String caller = Address.getMyAddress(stub);
+
         TokenTypeManager manager = TokenTypeManager.read(stub);
         Map<String, List<String>> attributes = manager.getTokenType(type);
         if (attributes == null) {
@@ -93,7 +96,7 @@ public class Extension extends CustomChaincodeBase {
         }
 
         TokenManager nft = new TokenManager();
-        return nft.mint(stub, tokenId, type, owner, xattr, uri);
+        return nft.mint(stub, tokenId, type, caller, xattr, uri);
     }
 
     private static boolean haveValidAttributes(Map<String, Object> xattr, Map<String, List<String>> attributes) {

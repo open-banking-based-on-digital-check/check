@@ -2,6 +2,7 @@ package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.protocol
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.TokenManager;
+import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.user.Address;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.hyperledger.fabric.shim.ledger.KeyValue;
 import org.hyperledger.fabric.shim.ledger.QueryResultsIterator;
@@ -15,13 +16,21 @@ public class Default {
 
     private Default() {}
 
-    public static boolean mint(ChaincodeStub stub, String tokenId, String owner) throws JsonProcessingException {
+    public static boolean mint(ChaincodeStub stub, String tokenId) throws JsonProcessingException {
+        String caller = Address.getMyAddress(stub);
+
         TokenManager nft = new TokenManager();
         String type = "base";
-        return nft.mint(stub, tokenId, type, owner, null, null);
+        return nft.mint(stub, tokenId, type, caller, null, null);
     }
 
     public static boolean burn(ChaincodeStub stub, String tokenId) throws IOException {
+        String caller = Address.getMyAddress(stub);
+        String owner = ERC721.ownerOf(stub, tokenId);
+        if (!caller.equals(owner)) {
+            return false;
+        }
+
         TokenManager nft = TokenManager.read(stub, tokenId);
         return nft.burn(stub, tokenId);
     }

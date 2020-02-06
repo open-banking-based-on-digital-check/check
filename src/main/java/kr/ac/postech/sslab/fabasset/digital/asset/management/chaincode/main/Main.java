@@ -185,16 +185,14 @@ public class Main extends CustomChaincodeBase {
     }
 
     private String setApprovalForAll(ChaincodeStub stub, List<String> args) throws IOException {
-        if (args.size() != 3 || isNullOrEmpty(args.get(0))
-                || isNullOrEmpty(args.get(1)) || isNullOrEmpty(args.get(2))) {
+        if (args.size() != 2 || isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))) {
             throw new IllegalArgumentException(String.format(ARG_MESSAGE, "3"));
         }
 
-        String caller = args.get(0);
-        String operator = args.get(1);
-        boolean approved = Boolean.parseBoolean(args.get(2));
+        String operator = args.get(0);
+        boolean approved = Boolean.parseBoolean(args.get(1));
 
-        return Boolean.toString(ERC721.setApprovalForAll(stub, caller, operator, approved));
+        return Boolean.toString(ERC721.setApprovalForAll(stub, operator, approved));
     }
 
     private String getApproved(ChaincodeStub stub, List<String> args) throws IOException {
@@ -208,8 +206,7 @@ public class Main extends CustomChaincodeBase {
     }
 
     private String isApprovedForAll(ChaincodeStub stub, List<String> args) throws IOException {
-        if (args.size() != 2 || isNullOrEmpty(args.get(0))
-                || isNullOrEmpty(args.get(1))) {
+        if (args.size() != 2 || isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))) {
             throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2"));
         }
 
@@ -220,33 +217,31 @@ public class Main extends CustomChaincodeBase {
     }
 
     private String mint(ChaincodeStub stub, List<String> args) throws IOException {
-        if (args.size() == 2) {
-            if(isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))) {
-                throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2"));
+        if (args.size() == 1) {
+            if(isNullOrEmpty(args.get(0))) {
+                throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1"));
             }
 
             String tokenId = args.get(0);
-            String owner = args.get(1);
-            return Boolean.toString(Default.mint(stub, tokenId, owner));
+            return Boolean.toString(Default.mint(stub, tokenId));
         }
-        else if (args.size() == 5) {
-            if (isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1)) || isNullOrEmpty(args.get(2))
-                    || isNullOrEmpty(args.get(3)) || isNullOrEmpty(args.get(4))) {
-                throw new IllegalArgumentException(String.format(ARG_MESSAGE, "5"));
+        else if (args.size() == 4) {
+            if (isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))
+                    || isNullOrEmpty(args.get(2)) || isNullOrEmpty(args.get(3))) {
+                throw new IllegalArgumentException(String.format(ARG_MESSAGE, "4"));
             }
 
             String tokenId = args.get(0);
             String type = args.get(1);
-            String owner = args.get(2);
             Map<String, Object> xattr =
                     objectMapper.readValue(args.get(3), new TypeReference<HashMap<String, Object>>(){});
             Map<String, String> uri =
                     objectMapper.readValue(args.get(4), new TypeReference<HashMap<String, String>>(){});
 
-            return Boolean.toString(Extension.mint(stub, tokenId, type, owner, xattr, uri));
+            return Boolean.toString(Extension.mint(stub, tokenId, type, xattr, uri));
         }
 
-        throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2 or 5"));
+        throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1 or 4"));
     }
 
     private String burn(ChaincodeStub stub, List<String> args) throws IOException {
@@ -365,28 +360,24 @@ public class Main extends CustomChaincodeBase {
     }
 
     private String enrollTokenType(ChaincodeStub stub, List<String> args) throws IOException {
-        if (args.size() != 3
-                || isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1)) || isNullOrEmpty(args.get(2))) {
-            throw new IllegalArgumentException(String.format(ARG_MESSAGE, "3"));
-        }
-
-        String admin = args.get(0);
-        String type = args.get(1);
-        String json = args.get(2);
-
-        return Boolean.toString(TokenTypeManagement.enrollTokenType(stub, admin, type, json));
-    }
-
-    private String dropTokenType(ChaincodeStub stub, List<String> args) throws IOException {
-        if (args.size() != 2
-                || isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))) {
+        if (args.size() != 2 || isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))) {
             throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2"));
         }
 
-        String admin = args.get(0);
-        String type = args.get(1);
+        String type = args.get(0);
+        String json = args.get(1);
 
-        return Boolean.toString(TokenTypeManagement.dropTokenType(stub, admin, type));
+        return Boolean.toString(TokenTypeManagement.enrollTokenType(stub, type, json));
+    }
+
+    private String dropTokenType(ChaincodeStub stub, List<String> args) throws IOException {
+        if (args.size() != 1 || isNullOrEmpty(args.get(0))) {
+            throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2"));
+        }
+
+        String type = args.get(0);
+
+        return Boolean.toString(TokenTypeManagement.dropTokenType(stub, type));
     }
 
     private String tokenTypesOf(ChaincodeStub stub) throws IOException {
