@@ -77,8 +77,8 @@ public class Main extends CustomChaincodeBase {
                     response = query(stub, args);
                     break;
 
-                case QUERY_HISTORY_FUNCTION_NAME:
-                    response = queryHistory(stub, args);
+                case HISTORY_FUNCTION_NAME:
+                    response = history(stub, args);
                     break;
 
                 case SET_URI_FUNCTION_NAME:
@@ -298,17 +298,17 @@ public class Main extends CustomChaincodeBase {
 
         String tokenId = args.get(0);
 
-        return Extension.query(stub, tokenId);
+        return Default.query(stub, tokenId);
     }
 
-    private String queryHistory(ChaincodeStub stub, List<String> args) {
+    private String history(ChaincodeStub stub, List<String> args) {
         if (args.size() != 1 || isNullOrEmpty(args.get(0))) {
             throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1"));
         }
 
         String tokenId = args.get(0);
 
-        return Extension.queryHistory(stub, tokenId).toString();
+        return Default.history(stub, tokenId).toString();
     }
 
     private String setURI(ChaincodeStub stub, List<String> args) throws IOException {

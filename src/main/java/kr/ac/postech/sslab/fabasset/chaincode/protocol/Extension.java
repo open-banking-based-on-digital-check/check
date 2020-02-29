@@ -10,7 +10,6 @@ import kr.ac.postech.sslab.fabasset.chaincode.util.DataTypeConversion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hyperledger.fabric.shim.ChaincodeStub;
-import org.hyperledger.fabric.shim.ledger.KeyModification;
 import org.hyperledger.fabric.shim.ledger.KeyValue;
 import org.hyperledger.fabric.shim.ledger.QueryResultsIterator;
 
@@ -48,21 +47,6 @@ public class Extension extends CustomChaincodeBase {
         }
 
         return tokenIds;
-    }
-
-    public static String query(ChaincodeStub stub, String tokenId) throws IOException {
-        TokenManager nft = TokenManager.read(stub, tokenId);
-        return nft.toJSONString();
-    }
-
-    public static List<String> queryHistory(ChaincodeStub stub, String tokenId) {
-        List<String> histories = new LinkedList<>();
-        QueryResultsIterator<KeyModification> resultsIterator = stub.getHistoryForKey(tokenId);
-        while (resultsIterator.iterator().hasNext()) {
-            histories.add(resultsIterator.iterator().next().getStringValue());
-        }
-
-        return histories;
     }
 
     public static boolean mint(ChaincodeStub stub, String tokenId, String type, Map<String, Object> xattr, Map<String, String> uri) throws IOException {

@@ -4,11 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import kr.ac.postech.sslab.fabasset.chaincode.manager.TokenManager;
 import kr.ac.postech.sslab.fabasset.chaincode.client.Address;
 import org.hyperledger.fabric.shim.ChaincodeStub;
+import org.hyperledger.fabric.shim.ledger.KeyModification;
 import org.hyperledger.fabric.shim.ledger.KeyValue;
 import org.hyperledger.fabric.shim.ledger.QueryResultsIterator;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Default {
@@ -21,7 +23,11 @@ public class Default {
 
         TokenManager nft = new TokenManager();
         String type = "base";
-        return nft.mint(stub, tokenId, type, caller, null, null);
+        nft.mint(stub, tokenId, type, caller, null, null);
+
+        ERC721.eventTransfer(stub, "", caller, tokenId);
+
+        return true;
     }
 
     public static boolean burn(ChaincodeStub stub, String tokenId) throws IOException {
@@ -32,7 +38,11 @@ public class Default {
         }
 
         TokenManager nft = TokenManager.read(stub, tokenId);
-        return nft.burn(stub, tokenId);
+        nft.burn(stub, tokenId);
+
+        ERC721.eventTransfer(stub, owner, "", tokenId);
+
+        return true;
     }
 
     public static String getType(ChaincodeStub stub, String tokenId) throws IOException {
@@ -51,5 +61,20 @@ public class Default {
         }
 
         return tokenIds;
+    }
+
+    public static String query(ChaincodeStub stub, String tokenId) throws IOException {
+        TokenManager nft = TokenManager.read(stub, tokenId);
+        return nft.toJSONString();
+    }
+
+    public static List<String> history(ChaincodeStub stub, String tokenId) {
+        List<String> histories = new LinkedList<>();
+        QueryResultsIterator<KeyModification> resultsIterator = stub.getHistoryForKey(tokenId);
+        while (resultsIterator.iterator().hasNext()) {
+            histories.add(resultsIterator.iterator().next().getStringValue());
+        }
+
+        return histories;
     }
 }

@@ -19,7 +19,7 @@ public final class Function {
 
     public static final String TOKEN_IDS_OF_FUNCTION_NAME = "tokenIdsOf";
     public static final String QUERY_FUNCTION_NAME = "query";
-    public static final String QUERY_HISTORY_FUNCTION_NAME = "queryHistory";
+    public static final String HISTORY_FUNCTION_NAME = "history";
 
     public static final String SET_URI_FUNCTION_NAME = "setURI";
     public static final String GET_URI_FUNCTION_NAME = "getURI";
