@@ -1,8 +1,8 @@
 package kr.ac.postech.sslab.fabasset.chaincode.main;
 
 import kr.ac.postech.sslab.fabasset.chaincode.constant.Message;
-import kr.ac.postech.sslab.fabasset.chaincode.structure.OperatorManager;
-import kr.ac.postech.sslab.fabasset.chaincode.structure.TokenTypeManager;
+import kr.ac.postech.sslab.fabasset.chaincode.manager.OperatorManager;
+import kr.ac.postech.sslab.fabasset.chaincode.manager.TokenTypeManager;
 import org.hyperledger.fabric.shim.ChaincodeBase;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.hyperledger.fabric.shim.ResponseUtils;

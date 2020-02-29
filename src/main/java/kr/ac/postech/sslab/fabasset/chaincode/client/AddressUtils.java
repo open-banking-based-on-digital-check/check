@@ -1,6 +1,6 @@
 //reference: https://github.com/MDhondt/Fabric-ERC20
 
-package kr.ac.postech.sslab.fabasset.chaincode.user;
+package kr.ac.postech.sslab.fabasset.chaincode.client;
 
 import org.bouncycastle.jcajce.provider.digest.Keccak;
 import java.security.cert.Certificate;

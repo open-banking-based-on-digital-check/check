@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.ac.postech.sslab.fabasset.chaincode.constant.DataType;
 import kr.ac.postech.sslab.fabasset.chaincode.constant.Key;
 import kr.ac.postech.sslab.fabasset.chaincode.main.CustomChaincodeBase;
-import kr.ac.postech.sslab.fabasset.chaincode.structure.TokenTypeManager;
-import kr.ac.postech.sslab.fabasset.chaincode.user.Address;
+import kr.ac.postech.sslab.fabasset.chaincode.manager.TokenTypeManager;
+import kr.ac.postech.sslab.fabasset.chaincode.client.Address;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 
 import java.io.IOException;

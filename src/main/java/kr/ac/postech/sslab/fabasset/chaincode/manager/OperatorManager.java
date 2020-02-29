@@ -1,4 +1,4 @@
-package kr.ac.postech.sslab.fabasset.chaincode.structure;
+package kr.ac.postech.sslab.fabasset.chaincode.manager;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

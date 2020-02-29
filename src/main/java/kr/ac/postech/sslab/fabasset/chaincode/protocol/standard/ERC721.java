@@ -1,9 +1,9 @@
 package kr.ac.postech.sslab.fabasset.chaincode.protocol.standard;
 
 import kr.ac.postech.sslab.fabasset.chaincode.main.CustomChaincodeBase;
-import kr.ac.postech.sslab.fabasset.chaincode.structure.OperatorManager;
-import kr.ac.postech.sslab.fabasset.chaincode.structure.TokenManager;
-import kr.ac.postech.sslab.fabasset.chaincode.user.Address;
+import kr.ac.postech.sslab.fabasset.chaincode.manager.OperatorManager;
+import kr.ac.postech.sslab.fabasset.chaincode.manager.TokenManager;
+import kr.ac.postech.sslab.fabasset.chaincode.client.Address;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.hyperledger.fabric.shim.ledger.KeyValue;
 import org.hyperledger.fabric.shim.ledger.QueryResultsIterator;
