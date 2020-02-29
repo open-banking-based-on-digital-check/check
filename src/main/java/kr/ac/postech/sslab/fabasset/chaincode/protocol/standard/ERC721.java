@@ -1,5 +1,6 @@
 package kr.ac.postech.sslab.fabasset.chaincode.protocol.standard;
 
+import com.google.protobuf.ByteString;
 import kr.ac.postech.sslab.fabasset.chaincode.main.CustomChaincodeBase;
 import kr.ac.postech.sslab.fabasset.chaincode.manager.OperatorManager;
 import kr.ac.postech.sslab.fabasset.chaincode.manager.TokenManager;
@@ -13,6 +14,22 @@ import java.util.Map;
 
 public class ERC721 extends CustomChaincodeBase {
 	private static final String QUERY_OWNER = "{\"selector\":{\"owner\":\"%s\"}}";
+
+	public static void eventTransfer(ChaincodeStub stub, String from, String to, String tokenId) {
+		String message = String.format("Client %s transfers NFT %s to Client %s", from, tokenId, to);
+		stub.setEvent("Transfer", ByteString.copyFromUtf8(message).toByteArray());
+	}
+
+	public static void eventApproval(ChaincodeStub stub, String owner, String approved, String tokenId) {
+		String message = String.format("Client %s approves NFT %s to Client %s", owner, tokenId, approved);
+		stub.setEvent("Approval", ByteString.copyFromUtf8(message).toByteArray());
+	}
+
+	public static void eventApprovalForAll(ChaincodeStub stub, String owner, String operator, boolean approved) {
+		String message = String.format("Client %s %s Client %s to be an operator",
+									owner, approved ? "enables" : "disables", operator);
+		stub.setEvent("ApprovalForAll", ByteString.copyFromUtf8(message).toByteArray());
+	}
 
 	public static long balanceOf(ChaincodeStub stub, String owner) {
 		String query = String.format(QUERY_OWNER, owner);
@@ -48,6 +65,9 @@ public class ERC721 extends CustomChaincodeBase {
 
 		nft.setApprovee(stub, "");
 		nft.setOwner(stub, to);
+
+		eventTransfer(stub, from, to, tokenId);
+
 		return true;
 	}
 
@@ -59,7 +79,11 @@ public class ERC721 extends CustomChaincodeBase {
 		}
 
 		TokenManager nft = TokenManager.read(stub, tokenId);
-		return nft.setApprovee(stub, approved);
+		nft.setApprovee(stub, approved);
+
+		eventApproval(stub, owner, approved, tokenId);
+
+		return true;
 	}
 
 	public static boolean setApprovalForAll(ChaincodeStub stub, String operator, boolean approved) throws IOException {
@@ -79,6 +103,9 @@ public class ERC721 extends CustomChaincodeBase {
 		operators.put(caller, map);
 
 		approval.setOperatorsApproval(stub, operators);
+
+		eventApprovalForAll(stub, caller, operator, approved);
+
 		return true;
 	}
 
