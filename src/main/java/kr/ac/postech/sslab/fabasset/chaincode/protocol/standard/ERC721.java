@@ -1,9 +1,9 @@
-package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.protocol.standard;
+package kr.ac.postech.sslab.fabasset.chaincode.protocol.standard;
 
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.main.CustomChaincodeBase;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.TokenManager;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.OperatorManager;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.user.Address;
+import kr.ac.postech.sslab.fabasset.chaincode.main.CustomChaincodeBase;
+import kr.ac.postech.sslab.fabasset.chaincode.structure.OperatorManager;
+import kr.ac.postech.sslab.fabasset.chaincode.structure.TokenManager;
+import kr.ac.postech.sslab.fabasset.chaincode.user.Address;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.hyperledger.fabric.shim.ledger.KeyValue;
 import org.hyperledger.fabric.shim.ledger.QueryResultsIterator;

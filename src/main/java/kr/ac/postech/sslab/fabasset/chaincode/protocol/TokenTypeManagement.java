@@ -1,17 +1,16 @@
-package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.protocol;
+package kr.ac.postech.sslab.fabasset.chaincode.protocol;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.TokenTypeManager;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.main.CustomChaincodeBase;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.user.Address;
+import kr.ac.postech.sslab.fabasset.chaincode.constant.DataType;
+import kr.ac.postech.sslab.fabasset.chaincode.constant.Key;
+import kr.ac.postech.sslab.fabasset.chaincode.main.CustomChaincodeBase;
+import kr.ac.postech.sslab.fabasset.chaincode.structure.TokenTypeManager;
+import kr.ac.postech.sslab.fabasset.chaincode.user.Address;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 
 import java.io.IOException;
 import java.util.*;
-
-import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.DataType.STRING;
-import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Key.ADMIN_KEY;
 
 public class TokenTypeManagement extends CustomChaincodeBase {
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -25,8 +24,8 @@ public class TokenTypeManagement extends CustomChaincodeBase {
         String caller = Address.getMyAddress(stub);
 
         Map<String, List<String>> attributes = objectMapper.readValue(json, new TypeReference<HashMap<String, List<String>>>() {});
-        List<String> list = new ArrayList<>(Arrays.asList(STRING, caller));
-        attributes.put(ADMIN_KEY, list);
+        List<String> list = new ArrayList<>(Arrays.asList(DataType.STRING, caller));
+        attributes.put(Key.ADMIN_KEY, list);
         TokenTypeManager manager = TokenTypeManager.read(stub);
         return manager.addTokenType(stub, type, attributes);
     }

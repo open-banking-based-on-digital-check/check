@@ -1,4 +1,4 @@
-package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant;
+package kr.ac.postech.sslab.fabasset.chaincode.constant;
 
 public final class Message {
     private Message() {}

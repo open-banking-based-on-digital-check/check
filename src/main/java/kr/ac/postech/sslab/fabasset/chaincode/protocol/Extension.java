@@ -1,12 +1,12 @@
-package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.protocol;
+package kr.ac.postech.sslab.fabasset.chaincode.protocol;
 
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.DataType;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Message;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.main.CustomChaincodeBase;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.TokenManager;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.TokenTypeManager;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.user.Address;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.util.DataTypeConversion;
+import kr.ac.postech.sslab.fabasset.chaincode.constant.DataType;
+import kr.ac.postech.sslab.fabasset.chaincode.constant.Message;
+import kr.ac.postech.sslab.fabasset.chaincode.main.CustomChaincodeBase;
+import kr.ac.postech.sslab.fabasset.chaincode.structure.TokenManager;
+import kr.ac.postech.sslab.fabasset.chaincode.structure.TokenTypeManager;
+import kr.ac.postech.sslab.fabasset.chaincode.user.Address;
+import kr.ac.postech.sslab.fabasset.chaincode.util.DataTypeConversion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hyperledger.fabric.shim.ChaincodeStub;
@@ -16,10 +16,6 @@ import org.hyperledger.fabric.shim.ledger.QueryResultsIterator;
 
 import java.io.IOException;
 import java.util.*;
-
-import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.DataType.*;
-import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Message.NO_ATTRIBUTE_MESSAGE;
-import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Message.NO_TOKEN_TYPE_MESSAGE;
 
 public class Extension extends CustomChaincodeBase {
     private static final Log LOG = LogFactory.getLog(Extension.class);
@@ -75,7 +71,7 @@ public class Extension extends CustomChaincodeBase {
         TokenTypeManager manager = TokenTypeManager.read(stub);
         Map<String, List<String>> attributes = manager.getTokenType(type);
         if (attributes == null) {
-            LOG.error(NO_TOKEN_TYPE_MESSAGE);
+            LOG.error(Message.NO_TOKEN_TYPE_MESSAGE);
             return false;
         }
 
@@ -102,7 +98,7 @@ public class Extension extends CustomChaincodeBase {
     private static boolean haveValidAttributes(Map<String, Object> xattr, Map<String, List<String>> attributes) {
         for (String key : xattr.keySet()) {
             if (!attributes.containsKey(key)) {
-                LOG.error(NO_ATTRIBUTE_MESSAGE);
+                LOG.error(Message.NO_ATTRIBUTE_MESSAGE);
                 return false;
             }
         }
@@ -217,11 +213,11 @@ public class Extension extends CustomChaincodeBase {
             case DataType.BOOLEAN:
                 return Boolean.toString((boolean) value);
 
-            case LIST_INTEGER:
+            case DataType.LIST_INTEGER:
                 List<Integer> integers = (List<Integer>) value;
                 return integers != null ? integers.toString() : null;
 
-            case LIST_DOUBLE:
+            case DataType.LIST_DOUBLE:
                 List<Double> doubles = (List<Double>) value;
                 return doubles != null ? doubles.toString() : null;
 

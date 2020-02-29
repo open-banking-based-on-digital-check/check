@@ -1,17 +1,17 @@
-package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.main;
+package kr.ac.postech.sslab.fabasset.chaincode.main;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.protocol.Extension;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.protocol.TokenTypeManagement;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.protocol.standard.Default;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.protocol.standard.ERC721;
+import kr.ac.postech.sslab.fabasset.chaincode.protocol.Extension;
+import kr.ac.postech.sslab.fabasset.chaincode.protocol.TokenTypeManagement;
+import kr.ac.postech.sslab.fabasset.chaincode.protocol.standard.Default;
+import kr.ac.postech.sslab.fabasset.chaincode.protocol.standard.ERC721;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.hyperledger.fabric.shim.ResponseUtils;
 
-import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Function.*;
-import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Message.ARG_MESSAGE;
-import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Message.NO_FUNCTION_MESSAGE;
+import static kr.ac.postech.sslab.fabasset.chaincode.constant.Function.*;
+import static kr.ac.postech.sslab.fabasset.chaincode.constant.Message.ARG_MESSAGE;
+import static kr.ac.postech.sslab.fabasset.chaincode.constant.Message.NO_FUNCTION_MESSAGE;
 import static io.netty.util.internal.StringUtil.isNullOrEmpty;
 
 import java.io.IOException;

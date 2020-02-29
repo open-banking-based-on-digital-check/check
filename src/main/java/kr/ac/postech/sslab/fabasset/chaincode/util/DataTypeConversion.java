@@ -1,15 +1,13 @@
-package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.util;
+package kr.ac.postech.sslab.fabasset.chaincode.util;
 
+import kr.ac.postech.sslab.fabasset.chaincode.constant.DataType;
+import kr.ac.postech.sslab.fabasset.chaincode.constant.Message;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.DataType.*;
-import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.DataType.LIST_BOOLEAN;
-import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Message.NO_DATA_TYPE_MESSAGE;
 
 public class DataTypeConversion {
     private static final Log LOG = LogFactory.getLog(DataTypeConversion.class);
@@ -20,38 +18,38 @@ public class DataTypeConversion {
 
     public static Object strToDataType(String dataType, String value) {
         switch (dataType) {
-            case INTEGER:
+            case DataType.INTEGER:
                 return Integer.parseInt(value);
 
-            case DOUBLE:
+            case DataType.DOUBLE:
                 return Double.parseDouble(value);
 
-            case BYTE:
+            case DataType.BYTE:
                 return Byte.parseByte(value);
 
-            case STRING:
+            case DataType.STRING:
                 return value;
 
-            case BOOLEAN:
+            case DataType.BOOLEAN:
                 return Boolean.parseBoolean(value);
 
-            case LIST_INTEGER:
+            case DataType.LIST_INTEGER:
                 return toListInteger(value);
 
-            case LIST_DOUBLE:
+            case DataType.LIST_DOUBLE:
                 return toListDouble(value);
 
-            case LIST_BYTE:
+            case DataType.LIST_BYTE:
                 return toListByte(value);
 
-            case LIST_STRING:
+            case DataType.LIST_STRING:
                 return toListString(value);
 
-            case LIST_BOOLEAN:
+            case DataType.LIST_BOOLEAN:
                 return toListBoolean(value);
 
             default:
-                LOG.error(NO_DATA_TYPE_MESSAGE);
+                LOG.error(Message.NO_DATA_TYPE_MESSAGE);
                 return null;
         }
     }

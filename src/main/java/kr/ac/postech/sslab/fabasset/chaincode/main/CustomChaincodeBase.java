@@ -1,8 +1,8 @@
-package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.main;
+package kr.ac.postech.sslab.fabasset.chaincode.main;
 
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Message;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.OperatorManager;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure.TokenTypeManager;
+import kr.ac.postech.sslab.fabasset.chaincode.constant.Message;
+import kr.ac.postech.sslab.fabasset.chaincode.structure.OperatorManager;
+import kr.ac.postech.sslab.fabasset.chaincode.structure.TokenTypeManager;
 import org.hyperledger.fabric.shim.ChaincodeBase;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.hyperledger.fabric.shim.ResponseUtils;
@@ -10,8 +10,8 @@ import org.hyperledger.fabric.shim.ResponseUtils;
 import java.util.List;
 import java.util.Map;
 
-import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Function.INIT_FUNCTION_NAME;
-import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Message.INIT_FUNCTION_MESSAGE;
+import static kr.ac.postech.sslab.fabasset.chaincode.constant.Function.INIT_FUNCTION_NAME;
+import static kr.ac.postech.sslab.fabasset.chaincode.constant.Message.INIT_FUNCTION_MESSAGE;
 
 public class CustomChaincodeBase extends ChaincodeBase {
     @Override

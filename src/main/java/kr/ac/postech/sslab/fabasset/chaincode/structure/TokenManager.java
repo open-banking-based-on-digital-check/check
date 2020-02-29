@@ -1,9 +1,9 @@
-package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure;
+package kr.ac.postech.sslab.fabasset.chaincode.structure;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Key;
+import kr.ac.postech.sslab.fabasset.chaincode.constant.Key;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import java.io.IOException;
 import java.util.HashMap;

@@ -1,5 +1,5 @@
 //reference: https://github.com/MDhondt/Fabric-ERC20
-package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.user;
+package kr.ac.postech.sslab.fabasset.chaincode.user;
 
 import org.bouncycastle.util.io.pem.PemReader;
 import org.hyperledger.fabric.protos.msp.Identities.SerializedIdentity;

@@ -1,15 +1,13 @@
-package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure;
+package kr.ac.postech.sslab.fabasset.chaincode.structure;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.ac.postech.sslab.fabasset.chaincode.constant.Key;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 
 import java.io.IOException;
 import java.util.*;
-
-import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Key.TOKEN_TYPES;
-import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Key.ADMIN_KEY;
 
 public class TokenTypeManager {
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -22,7 +20,7 @@ public class TokenTypeManager {
     }
 
     public static TokenTypeManager read(ChaincodeStub stub) throws IOException {
-        String json = stub.getStringState(TOKEN_TYPES);
+        String json = stub.getStringState(Key.TOKEN_TYPES);
         if (json.trim().length() == 0) {
             return new TokenTypeManager(new HashMap<>());
         }
@@ -39,7 +37,7 @@ public class TokenTypeManager {
 
     public void setTokenTypes(ChaincodeStub stub, Map<String, Map<String, List<String>>> tokenTypes) throws JsonProcessingException {
         this.tokenTypes = tokenTypes;
-        stub.putStringState(TOKEN_TYPES, toJSONString());
+        stub.putStringState(Key.TOKEN_TYPES, toJSONString());
     }
 
     private boolean hashTokenType(String tokenType) {
@@ -52,7 +50,7 @@ public class TokenTypeManager {
         }
 
         tokenTypes.put(tokenType, attributes);
-        stub.putStringState(TOKEN_TYPES, toJSONString());
+        stub.putStringState(Key.TOKEN_TYPES, toJSONString());
         return true;
     }
 
@@ -62,7 +60,7 @@ public class TokenTypeManager {
         }
 
         tokenTypes.remove(tokenType);
-        stub.putStringState(TOKEN_TYPES, toJSONString());
+        stub.putStringState(Key.TOKEN_TYPES, toJSONString());
         return true;
     }
 
@@ -91,7 +89,7 @@ public class TokenTypeManager {
     }
 
     public String getAdmin(String tokenType) {
-        List<String> pair = getAttributeOfTokenType(tokenType, ADMIN_KEY);
+        List<String> pair = getAttributeOfTokenType(tokenType, Key.ADMIN_KEY);
 
         if (pair.isEmpty()) {
             return "";

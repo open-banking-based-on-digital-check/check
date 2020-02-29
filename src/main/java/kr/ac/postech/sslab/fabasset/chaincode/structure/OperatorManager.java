@@ -1,15 +1,14 @@
-package kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.structure;
+package kr.ac.postech.sslab.fabasset.chaincode.structure;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.ac.postech.sslab.fabasset.chaincode.constant.Key;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import static kr.ac.postech.sslab.fabasset.digital.asset.management.chaincode.constant.Key.OPERATORS_APPROVAL;
 
 public class OperatorManager {
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -21,7 +20,7 @@ public class OperatorManager {
     private Map<String, Map<String, Boolean>> operators;
 
     public static OperatorManager read(ChaincodeStub stub) throws IOException {
-        String json = stub.getStringState(OPERATORS_APPROVAL);
+        String json = stub.getStringState(Key.OPERATORS_APPROVAL);
         if (json.trim().length() == 0) {
             return new OperatorManager(new HashMap<>());
         }
@@ -38,7 +37,7 @@ public class OperatorManager {
 
     public void setOperatorsApproval(ChaincodeStub stub, Map<String, Map<String, Boolean>> operators) throws JsonProcessingException {
         this.operators = operators;
-        stub.putStringState(OPERATORS_APPROVAL, toJSONString());
+        stub.putStringState(Key.OPERATORS_APPROVAL, toJSONString());
     }
 
     private String toJSONString() throws JsonProcessingException {
