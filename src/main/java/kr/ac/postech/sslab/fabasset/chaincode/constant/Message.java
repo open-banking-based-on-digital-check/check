@@ -10,8 +10,4 @@ public final class Message {
     public static final String NO_FUNCTION_MESSAGE = "There is no such function";
 
     public static final String NO_DATA_TYPE_MESSAGE = "There is no such data type";
-
-    public static final String NO_TOKEN_TYPE_MESSAGE = "There is no such token type";
-
-    public static final String NO_ATTRIBUTE_MESSAGE = "There is no such attribute";
 }

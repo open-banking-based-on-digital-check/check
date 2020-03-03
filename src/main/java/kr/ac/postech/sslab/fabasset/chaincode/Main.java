@@ -1,25 +1,61 @@
-package kr.ac.postech.sslab.fabasset.chaincode.main;
+package kr.ac.postech.sslab.fabasset.chaincode;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.ac.postech.sslab.fabasset.chaincode.manager.OperatorManager;
+import kr.ac.postech.sslab.fabasset.chaincode.manager.TokenTypeManager;
 import kr.ac.postech.sslab.fabasset.chaincode.protocol.Extension;
 import kr.ac.postech.sslab.fabasset.chaincode.protocol.TokenTypeManagement;
 import kr.ac.postech.sslab.fabasset.chaincode.protocol.standard.Default;
 import kr.ac.postech.sslab.fabasset.chaincode.protocol.standard.ERC721;
+import org.hyperledger.fabric.shim.ChaincodeBase;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.hyperledger.fabric.shim.ResponseUtils;
 
 import static kr.ac.postech.sslab.fabasset.chaincode.constant.Function.*;
-import static kr.ac.postech.sslab.fabasset.chaincode.constant.Message.ARG_MESSAGE;
-import static kr.ac.postech.sslab.fabasset.chaincode.constant.Message.NO_FUNCTION_MESSAGE;
 import static io.netty.util.internal.StringUtil.isNullOrEmpty;
+import static kr.ac.postech.sslab.fabasset.chaincode.constant.Message.*;
 
 import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.util.*;
 
 
-public class Main extends CustomChaincodeBase {
+public class Main extends ChaincodeBase {
     private static ObjectMapper objectMapper = new ObjectMapper();
+
+    @Override
+    public Response init(ChaincodeStub stub) {
+
+        try {
+            String func = stub.getFunction();
+
+            if (!func.equals(INIT_FUNCTION_NAME)) {
+                return ResponseUtils.newErrorResponse(INIT_FUNCTION_MESSAGE);
+            }
+
+            List<String> args = stub.getParameters();
+            if (!args.isEmpty()) {
+                throw new InvalidParameterException(String.format(ARG_MESSAGE, "0"));
+            }
+
+            OperatorManager operatorManager = OperatorManager.load(stub);
+            Map<String, Map<String, Boolean>> operatorManagerTable = operatorManager.getTable();
+            if (operatorManagerTable.isEmpty()) {
+                operatorManager.store(stub);
+            }
+
+            TokenTypeManager tokenTypeManager = TokenTypeManager.load(stub);
+            Map<String, Map<String, List<String>>> tokenTypeManagerTable = tokenTypeManager.getTable();
+            if (tokenTypeManagerTable.isEmpty()) {
+                tokenTypeManager.store(stub);
+            }
+
+            return ResponseUtils.newSuccessResponse();
+        } catch (Exception e) {
+            return ResponseUtils.newErrorResponse(e.getMessage());
+        }
+    }
 
     @Override
     public Response invoke(ChaincodeStub stub) {
@@ -127,7 +163,7 @@ public class Main extends CustomChaincodeBase {
         }
     }
 
-    private String balanceOf(ChaincodeStub stub, List<String> args) throws IOException {
+    private String balanceOf(ChaincodeStub stub, List<String> args) {
         if (args.size() == 1) {
             if(isNullOrEmpty(args.get(0))) {
                 throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1"));
@@ -365,9 +401,10 @@ public class Main extends CustomChaincodeBase {
         }
 
         String type = args.get(0);
-        String json = args.get(1);
+        Map<String, List<String>> attributes = objectMapper.readValue(args.get(1),
+                new TypeReference<HashMap<String, List<String>>>() {});
 
-        return Boolean.toString(TokenTypeManagement.enrollTokenType(stub, type, json));
+        return Boolean.toString(TokenTypeManagement.enrollTokenType(stub, type, attributes));
     }
 
     private String dropTokenType(ChaincodeStub stub, List<String> args) throws IOException {

@@ -3,44 +3,51 @@ package kr.ac.postech.sslab.fabasset.chaincode.manager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.ac.postech.sslab.fabasset.chaincode.constant.Key;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static kr.ac.postech.sslab.fabasset.chaincode.constant.Key.OPERATORS_APPROVAL;
+
 public class OperatorManager {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    private OperatorManager(Map<String, Map<String, Boolean>> operators) {
-        this.operators = operators;
+    // operator relationship table
+    private Map<String, Map<String, Boolean>> table;
+
+    public void store(ChaincodeStub stub) throws JsonProcessingException {
+        stub.putStringState(OPERATORS_APPROVAL, toJSONString());
     }
 
-    private Map<String, Map<String, Boolean>> operators;
+    public static OperatorManager load(ChaincodeStub stub) throws IOException {
+        OperatorManager manager = new OperatorManager();
+        Map<String, Map<String, Boolean>> table;
+        String json = stub.getStringState(OPERATORS_APPROVAL);
 
-    public static OperatorManager read(ChaincodeStub stub) throws IOException {
-        String json = stub.getStringState(Key.OPERATORS_APPROVAL);
         if (json.trim().length() == 0) {
-            return new OperatorManager(new HashMap<>());
+            table = new HashMap<>();
         }
         else {
-            Map<String, Map<String, Boolean>> map
-                    = objectMapper.readValue(json, new TypeReference<HashMap<String, HashMap<String, Boolean>>>() {});
-            return new OperatorManager(map);
+            table = objectMapper.readValue(json,
+                    new TypeReference<HashMap<String, HashMap<String, Boolean>>>(){});
         }
+
+        manager.setTable(table);
+
+        return manager;
     }
 
-    public Map<String, Map<String, Boolean>> getOperatorsApproval() {
-        return operators;
+    public Map<String, Map<String, Boolean>> getTable() {
+        return table;
     }
 
-    public void setOperatorsApproval(ChaincodeStub stub, Map<String, Map<String, Boolean>> operators) throws JsonProcessingException {
-        this.operators = operators;
-        stub.putStringState(Key.OPERATORS_APPROVAL, toJSONString());
+    public void setTable(Map<String, Map<String, Boolean>> table) {
+        this.table = table;
     }
 
     private String toJSONString() throws JsonProcessingException {
-        return objectMapper.writeValueAsString(operators);
+        return objectMapper.writeValueAsString(table);
     }
 }

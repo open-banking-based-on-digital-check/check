@@ -13,5 +13,8 @@ public final class Key {
     public static final String XATTR_KEY = "xattr";
     public static final String URI_KEY = "uri";
 
+    public static final String PATH_KEY = "path";
+    public static final String HASH_KEY = "hash";
+
     public static final String ADMIN_KEY = "_admin";
 }

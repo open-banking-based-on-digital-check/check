@@ -18,59 +18,73 @@ public class Default {
 
     private Default() {}
 
-    public static boolean mint(ChaincodeStub stub, String tokenId) throws JsonProcessingException {
+    public static boolean mint(ChaincodeStub stub, String id) throws JsonProcessingException {
         String caller = Address.getMyAddress(stub);
+        String type = "base";
 
         TokenManager nft = new TokenManager();
-        String type = "base";
-        nft.mint(stub, tokenId, type, caller, null, null);
 
-        ERC721.eventTransfer(stub, "", caller, tokenId);
+        if (nft.hasToken(stub, id)) {
+            return false;
+        }
+
+        nft.setId(id);
+        nft.setType(type);
+        nft.setOwner(caller);
+        nft.setApprovee("");
+        nft.setXAttr(null);
+        nft.setURI(null);
+        nft.store(stub);
+
+        ERC721.eventTransfer(stub, "", caller, id);
 
         return true;
     }
 
-    public static boolean burn(ChaincodeStub stub, String tokenId) throws IOException {
+    public static boolean burn(ChaincodeStub stub, String id) throws IOException {
         String caller = Address.getMyAddress(stub);
-        String owner = ERC721.ownerOf(stub, tokenId);
+        String owner = ERC721.ownerOf(stub, id);
         if (!caller.equals(owner)) {
             return false;
         }
 
-        TokenManager nft = TokenManager.read(stub, tokenId);
-        nft.burn(stub, tokenId);
+        TokenManager nft = TokenManager.load(stub, id);
+        nft.delete(stub, id);
 
-        ERC721.eventTransfer(stub, owner, "", tokenId);
+        ERC721.eventTransfer(stub, owner, "", id);
 
         return true;
     }
 
-    public static String getType(ChaincodeStub stub, String tokenId) throws IOException {
-        TokenManager nft = TokenManager.read(stub, tokenId);
+    public static String getType(ChaincodeStub stub, String id) throws IOException {
+        TokenManager nft = TokenManager.load(stub, id);
         return nft.getType();
     }
 
     public static List<String> tokenIdsOf(ChaincodeStub stub, String owner) {
         String query = String.format(QUERY_OWNER, owner);
-
-        List<String> tokenIds = new ArrayList<>();
-        QueryResultsIterator<KeyValue> resultsIterator = stub.getQueryResult(query);
-        while(resultsIterator.iterator().hasNext()) {
-            String tokenId = resultsIterator.iterator().next().getKey();
-            tokenIds.add(tokenId);
-        }
-
-        return tokenIds;
+        return queryByValues(stub, query);
     }
 
-    public static String query(ChaincodeStub stub, String tokenId) throws IOException {
-        TokenManager nft = TokenManager.read(stub, tokenId);
+    public static String query(ChaincodeStub stub, String id) throws IOException {
+        TokenManager nft = TokenManager.load(stub, id);
         return nft.toJSONString();
     }
 
-    public static List<String> history(ChaincodeStub stub, String tokenId) {
+    public static List<String> queryByValues(ChaincodeStub stub, String query) {
+        List<String> ids = new ArrayList<>();
+        QueryResultsIterator<KeyValue> resultsIterator = stub.getQueryResult(query);
+        while(resultsIterator.iterator().hasNext()) {
+            String id = resultsIterator.iterator().next().getKey();
+            ids.add(id);
+        }
+
+        return ids;
+    }
+
+    public static List<String> history(ChaincodeStub stub, String id) {
         List<String> histories = new LinkedList<>();
-        QueryResultsIterator<KeyModification> resultsIterator = stub.getHistoryForKey(tokenId);
+        QueryResultsIterator<KeyModification> resultsIterator = stub.getHistoryForKey(id);
         while (resultsIterator.iterator().hasNext()) {
             histories.add(resultsIterator.iterator().next().getStringValue());
         }

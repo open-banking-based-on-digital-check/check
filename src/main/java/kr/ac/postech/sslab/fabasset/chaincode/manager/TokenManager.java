@@ -3,148 +3,144 @@ package kr.ac.postech.sslab.fabasset.chaincode.manager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.ac.postech.sslab.fabasset.chaincode.constant.Key;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
+import static kr.ac.postech.sslab.fabasset.chaincode.constant.Key.*;
 
 public class TokenManager {
     private static ObjectMapper objectMapper = new ObjectMapper();
 
-    private String tokenId;
+    // standard attributes
+    private String id;
     private String type;
     private String owner;
     private String approvee;
-    private Map<String, Object> xattr;
-    private Map<String, String> uri;
 
-    public TokenManager() {}
+    // extensible attributes
+    private Map<String, Object> xattr; // on-chain extensible attribute
+    private Map<String, String> uri; // off-chain extensible attribute
 
-    private TokenManager(String tokenId, String type, String owner, String approvee, Map<String, Object> xattr, Map<String, String> uri) {
-        this.tokenId = tokenId;
-        this.type = type;
-        this.owner = owner;
-        this.approvee = approvee;
-        this.xattr = xattr;
-        this.uri = uri;
+    public boolean hasToken(ChaincodeStub stub, String id) {
+        return stub.getStringState(id).length() != 0;
     }
 
-    public boolean mint(ChaincodeStub stub, String tokenId, String type, String owner, Map<String, Object> xattr, Map<String, String> uri) throws JsonProcessingException {
-        if (stub.getStringState(tokenId).length() != 0) {
-            return false;
-        }
+    public void store(ChaincodeStub stub) throws JsonProcessingException {
+        stub.putStringState(this.id, this.toJSONString());
+    }
 
-        this.tokenId = tokenId;
-        this.type = type;
-        this.owner = owner;
-        this.approvee = "";
-        this.xattr = xattr;
-        this.uri = uri;
-
-        stub.putStringState(this.tokenId, this.toJSONString());
-        return true;
+    public void delete(ChaincodeStub stub, String id) {
+        stub.delState(id);
     }
 
     @SuppressWarnings("unchecked")
-    public static TokenManager read(ChaincodeStub stub, String tokenId) throws IOException {
-        String json = stub.getStringState(tokenId);
+    public static TokenManager load(ChaincodeStub stub, String id) throws IOException {
+        TokenManager nft = new TokenManager();
+        String json = stub.getStringState(id);
 
-        Map<String, Object> map =
-                objectMapper.readValue(json, new TypeReference<HashMap<String, Object>>(){});
+        Map<String, Object> map = objectMapper.readValue(json,
+                new TypeReference<HashMap<String, Object>>(){});
 
-        String type = (String) map.get(Key.TYPE_KEY);
-        String owner = (String) map.get(Key.OWNER_KEY);
-        String approvee = (String) map.get(Key.APPROVEE_KEY);
+        nft.setId(id);
+
+        String type = (String) map.get(TYPE_KEY);
+        nft.setType(type);
+
+        String owner = (String) map.get(OWNER_KEY);
+        nft.setOwner(owner);
+
+        String approvee = (String) map.get(APPROVEE_KEY);
+        nft.setApprovee(approvee);
 
         Map<String, Object> xattr
-                = map.containsKey(Key.XATTR_KEY) ? (HashMap<String, Object>) map.get(Key.XATTR_KEY) : null;
+                = map.containsKey(XATTR_KEY) ? (HashMap<String, Object>) map.get(XATTR_KEY) : null;
+        nft.setXAttr(xattr);
 
         Map<String, String> uri
-                = map.containsKey(Key.URI_KEY) ? (HashMap<String, String>) map.get(Key.URI_KEY) : null;
+                = map.containsKey(URI_KEY) ? (HashMap<String, String>) map.get(URI_KEY) : null;
+        nft.setURI(uri);
 
-        return new TokenManager(tokenId, type, owner, approvee, xattr, uri);
+        return nft;
     }
 
-    public boolean burn(ChaincodeStub stub, String tokenId) {
-        stub.delState(tokenId);
-        return true;
-    }
-
-    public String getId() {
-        return this.tokenId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getType() {
-        return this.type;
+        return type;
     }
 
-    public boolean setOwner(ChaincodeStub stub, String owner) throws JsonProcessingException {
-        this.owner = owner;
-        stub.putStringState(this.tokenId, this.toJSONString());
-        return true;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getOwner() {
-        return this.owner;
+        return owner;
     }
 
-    public boolean setApprovee(ChaincodeStub stub, String approvee) throws JsonProcessingException {
-        this.approvee = approvee;
-        stub.putStringState(this.tokenId, this.toJSONString());
-        return true;
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public String getApprovee() {
-        return this.approvee;
+        return approvee;
     }
 
-    public boolean setXAttr(ChaincodeStub stub, String index, Object value) throws JsonProcessingException {
-        xattr.put(index, value);
-        stub.putStringState(this.tokenId, this.toJSONString());
-        return true;
-    }
-
-    public Object getXAttr(String index) {
-        return xattr.get(index);
+    public void setApprovee(String approvee) {
+        this.approvee = approvee;
     }
 
     public Map<String, Object> getXAttr() {
         return xattr;
     }
 
-    public boolean setURI(ChaincodeStub stub, String index, String value) throws JsonProcessingException {
-        uri.put(index, value);
-        stub.putStringState(this.tokenId, this.toJSONString());
-        return true;
+    public Object getXAttr(String index) {
+        return xattr.get(index);
     }
 
-    public String getURI(String index) {
-        return uri.get(index);
+    public void setXAttr(Map<String, Object> xattr) {
+        this.xattr = xattr;
+    }
+
+    public void setXAttr(String index, Object value) {
+        xattr.put(index, value);
     }
 
     public Map<String, String> getURI() {
         return uri;
     }
 
+    public String getURI(String index) {
+        return uri.get(index);
+    }
+
+    public void setURI(Map<String, String> uri) {
+        this.uri = uri;
+    }
+
+    public void setURI(String index, String value) {
+        uri.put(index, value);
+    }
+
     public String toJSONString() throws JsonProcessingException {
         return objectMapper.writeValueAsString(this.toMap());
     }
 
-    public Map<String, Object> toMap() {
+    private Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put(Key.ID_KEY, this.tokenId);
-        map.put(Key.TYPE_KEY, this.type);
-        map.put(Key.OWNER_KEY, this.owner);
-        map.put(Key.APPROVEE_KEY, this.approvee);
+        map.put(ID_KEY, this.id);
+        map.put(TYPE_KEY, this.type);
+        map.put(OWNER_KEY, this.owner);
+        map.put(APPROVEE_KEY, this.approvee);
 
         if (this.xattr != null) {
-            map.put(Key.XATTR_KEY, xattr);
+            map.put(XATTR_KEY, xattr);
         }
 
         if (this.uri != null) {
-            map.put(Key.URI_KEY, uri);
+            map.put(URI_KEY, uri);
         }
 
         return map;

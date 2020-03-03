@@ -9,96 +9,69 @@ import org.hyperledger.fabric.shim.ChaincodeStub;
 import java.io.IOException;
 import java.util.*;
 
+import static kr.ac.postech.sslab.fabasset.chaincode.constant.Key.TOKEN_TYPES;
+
 public class TokenTypeManager {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    //Map<token type, Map<attribute, [data type, initial value]>>
-    private Map<String, Map<String, List<String>>> tokenTypes;
+    // Map<token type, Map<attribute, [data type, initial value]>>
+    private Map<String, Map<String, List<String>>> table;
 
-    private TokenTypeManager(Map<String, Map<String, List<String>>> tokenTypes) {
-        this.tokenTypes = tokenTypes;
-    }
-
-    public static TokenTypeManager read(ChaincodeStub stub) throws IOException {
-        String json = stub.getStringState(Key.TOKEN_TYPES);
+    public static TokenTypeManager load(ChaincodeStub stub) throws IOException {
+        String json = stub.getStringState(TOKEN_TYPES);
+        TokenTypeManager manager = new TokenTypeManager();
+        Map<String, Map<String, List<String>>> table;
         if (json.trim().length() == 0) {
-            return new TokenTypeManager(new HashMap<>());
+            table = new HashMap<>();
         }
         else {
-            Map<String, Map<String, List<String>>> map
-                    = objectMapper.readValue(json, new TypeReference<HashMap<String, HashMap<String, List<String>>>>() {});
-            return new TokenTypeManager(map);
-        }
-    }
-
-    public Map<String, Map<String, List<String>>> getTokenTypes() {
-        return tokenTypes;
-    }
-
-    public void setTokenTypes(ChaincodeStub stub, Map<String, Map<String, List<String>>> tokenTypes) throws JsonProcessingException {
-        this.tokenTypes = tokenTypes;
-        stub.putStringState(Key.TOKEN_TYPES, toJSONString());
-    }
-
-    private boolean hashTokenType(String tokenType) {
-        return tokenTypes.containsKey(tokenType);
-    }
-
-    public boolean addTokenType(ChaincodeStub stub, String tokenType, Map<String, List<String>> attributes) throws JsonProcessingException {
-        if (hashTokenType(tokenType)) {
-            return false;
+            table = objectMapper.readValue(json,
+                    new TypeReference<HashMap<String, HashMap<String, List<String>>>>(){});
         }
 
-        tokenTypes.put(tokenType, attributes);
-        stub.putStringState(Key.TOKEN_TYPES, toJSONString());
-        return true;
+        manager.setTable(table);
+
+        return manager;
     }
 
-    public boolean removeTokenType(ChaincodeStub stub, String tokenType) throws JsonProcessingException {
-        if (!hashTokenType(tokenType)) {
-            return false;
-        }
 
-        tokenTypes.remove(tokenType);
-        stub.putStringState(Key.TOKEN_TYPES, toJSONString());
-        return true;
+    public void store(ChaincodeStub stub) throws JsonProcessingException {
+        stub.putStringState(TOKEN_TYPES, toJSONString());
     }
 
-    public Map<String, List<String>> getTokenType(String tokenType) {
-        if (!hashTokenType(tokenType)) {
-            return null;
-        }
-
-        return tokenTypes.get(tokenType);
+    public Map<String, Map<String, List<String>>> getTable() {
+        return table;
     }
 
-    private boolean hasAttribute(String tokenType, String attribute) {
-        return tokenTypes.get(tokenType).containsKey(attribute);
+    private void setTable(Map<String, Map<String, List<String>>> table) {
+        this.table = table;
     }
 
-    public List<String> getAttributeOfTokenType(String tokenType, String attribute) {
-        if (!hashTokenType(tokenType)) {
-            return new ArrayList<>();
-        }
-
-        if (!hasAttribute(tokenType, attribute)) {
-            return new ArrayList<>();
-        }
-
-        return tokenTypes.get(tokenType).get(attribute);
+    public boolean hashType(String type) {
+        return table.containsKey(type);
     }
 
-    public String getAdmin(String tokenType) {
-        List<String> pair = getAttributeOfTokenType(tokenType, Key.ADMIN_KEY);
+    public void addType(String type, Map<String, List<String>> attributes) {
+        table.put(type, attributes);
+    }
 
-        if (pair.isEmpty()) {
-            return "";
-        }
+    public void deleteType(String type) throws JsonProcessingException {
+        table.remove(type);
+    }
 
-        return pair.get(1);
+    public Map<String, List<String>> getType(String type) {
+        return table.get(type);
+    }
+
+    public boolean hasAttribute(String tokenType, String attribute) {
+        return table.get(tokenType).containsKey(attribute);
+    }
+
+    public List<String> getAttribute(String type, String attribute) {
+        return table.get(type).get(attribute);
     }
 
     private String toJSONString() throws JsonProcessingException {
-        return objectMapper.writeValueAsString(tokenTypes);
+        return objectMapper.writeValueAsString(table);
     }
 }
