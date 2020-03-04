@@ -31,6 +31,8 @@ public class TokenTypeManagement {
         List<String> info = new ArrayList<>(Arrays.asList(STRING, caller));
         attributes.put(ADMIN_KEY, info);
         manager.addType(type, attributes);
+        manager.store(stub);
+
         return true;
     }
 
