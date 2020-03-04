@@ -1,4 +1,4 @@
-package kr.ac.postech.sslab.fabasset.chaincode.protocol.standard;
+package kr.ac.postech.sslab.fabasset.chaincode.protocol;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import kr.ac.postech.sslab.fabasset.chaincode.manager.TokenManager;

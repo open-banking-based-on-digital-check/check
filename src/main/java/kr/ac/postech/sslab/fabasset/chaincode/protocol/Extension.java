@@ -5,8 +5,6 @@ import kr.ac.postech.sslab.fabasset.chaincode.constant.DataType;
 import kr.ac.postech.sslab.fabasset.chaincode.manager.TokenManager;
 import kr.ac.postech.sslab.fabasset.chaincode.manager.TokenTypeManager;
 import kr.ac.postech.sslab.fabasset.chaincode.client.Address;
-import kr.ac.postech.sslab.fabasset.chaincode.protocol.standard.Default;
-import kr.ac.postech.sslab.fabasset.chaincode.protocol.standard.ERC721;
 import kr.ac.postech.sslab.fabasset.chaincode.util.DataTypeConversion;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 

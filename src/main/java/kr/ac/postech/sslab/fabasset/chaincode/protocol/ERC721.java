@@ -1,4 +1,4 @@
-package kr.ac.postech.sslab.fabasset.chaincode.protocol.standard;
+package kr.ac.postech.sslab.fabasset.chaincode.protocol;
 
 import com.google.protobuf.ByteString;
 import kr.ac.postech.sslab.fabasset.chaincode.manager.OperatorManager;
