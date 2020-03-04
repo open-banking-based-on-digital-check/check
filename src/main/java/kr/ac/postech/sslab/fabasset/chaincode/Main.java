@@ -270,9 +270,9 @@ public class Main extends ChaincodeBase {
             String tokenId = args.get(0);
             String type = args.get(1);
             Map<String, Object> xattr =
-                    objectMapper.readValue(args.get(3), new TypeReference<HashMap<String, Object>>(){});
+                    objectMapper.readValue(args.get(2), new TypeReference<HashMap<String, Object>>(){});
             Map<String, String> uri =
-                    objectMapper.readValue(args.get(4), new TypeReference<HashMap<String, String>>(){});
+                    objectMapper.readValue(args.get(3), new TypeReference<HashMap<String, String>>(){});
 
             return Boolean.toString(Extension.mint(stub, tokenId, type, xattr, uri));
         }
