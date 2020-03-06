@@ -12,7 +12,7 @@ import java.util.Map;
 public class ERC721 {
 	private static final String QUERY_OWNER = "{\"selector\":{\"owner\":\"%s\"}}";
 
-	public static void eventTransfer(ChaincodeStub stub, String from, String to, String tokenId) {
+	static void eventTransfer(ChaincodeStub stub, String from, String to, String tokenId) {
 		String message = String.format("Client %s transfers NFT %s to Client %s", from, tokenId, to);
 		stub.setEvent("Transfer", ByteString.copyFromUtf8(message).toByteArray());
 	}
