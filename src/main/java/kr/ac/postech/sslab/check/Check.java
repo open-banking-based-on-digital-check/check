@@ -1,5 +1,6 @@
 package kr.ac.postech.sslab.check;
 
+import kr.ac.postech.sslab.fabasset.chaincode.protocol.ERC721;
 import kr.ac.postech.sslab.fabasset.chaincode.protocol.Extension;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import java.io.IOException;
@@ -72,6 +73,7 @@ class Check {
             } while (stub.getStringState(id).length() == 0);
 
             Extension.mint(stub, id, CHECK_TYPE, xattr, null);
+            ERC721.transferFrom(stub, bank, issuer, id);
         }
 
         return true;
