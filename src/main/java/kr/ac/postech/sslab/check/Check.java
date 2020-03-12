@@ -74,7 +74,7 @@ class Check {
             do {
                 long unixTime = Instant.now().getEpochSecond();
                 id = Long.toString(unixTime);
-            } while (stub.getStringState(id).length() == 0);
+            } while (stub.getStringState(id).length() != 0);
 
             Extension.mint(stub, id, CHECK_TYPE, xattr, null);
             ERC721.transferFrom(stub, bank, issuer, id);
