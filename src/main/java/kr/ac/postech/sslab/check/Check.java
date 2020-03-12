@@ -299,8 +299,75 @@ class Check {
         return true;
     }
 
-    boolean redeem(ChaincodeStub stub, String redeemer, String bank, String account, int balance) {
+    boolean redeem(ChaincodeStub stub, String redeemer, String bank, String account, int balance) throws IOException {
         List<String> redeemerIds = Extension.tokenIdsOf(stub, redeemer, CHECK_TYPE);
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DATE_AND_TIME_FORMAT);
+        LocalDateTime now = LocalDateTime.now();
+        String nowDataAndTime = dtf.format(now);
+
+        int redeemerTotalBalance = 0;
+        for (String redeemerId : redeemerIds) {
+            String redeemerBalanceString = Extension.getXAttr(stub, redeemerId, BALANCE_KEY);
+            if (redeemerBalanceString == null) {
+                return false;
+            }
+            int redeemerBalance = Integer.parseInt(redeemerBalanceString);
+            redeemerTotalBalance += redeemerBalance;
+        }
+
+        if (redeemerTotalBalance < balance) {
+            return false;
+        }
+
+        List<Triplet<String, String, Integer>> redeemerBankToBalances = new LinkedList<>();
+
+        for (String redeemerId : redeemerIds) {
+            String redeemerBank = Extension.getXAttr(stub, redeemerId, BANK_KEY);
+            if (redeemerBank == null) {
+                return false;
+            }
+
+            String redeemerBalanceString = Extension.getXAttr(stub, redeemerId, BALANCE_KEY);
+            if (redeemerBalanceString == null) {
+                return false;
+            }
+
+            int redeemerBalance = Integer.parseInt(redeemerBalanceString);
+
+            redeemerBankToBalances.add(new Triplet<>(redeemerId, redeemerBank, redeemerBalance));
+        }
+
+        int remainingBalance = balance;
+        for (Triplet<String, String, Integer> redeemerBankToBalance: redeemerBankToBalances) {
+            if (redeemerBankToBalance.getValue2() <= remainingBalance) {
+                Extension.setXAttr(stub, redeemerBankToBalance.getValue0(), BALANCE_KEY, Integer.toString(0));
+
+                List<String> receiverInfo = new ArrayList<>();
+                receiverInfo.add(account);
+                receiverInfo.add(bank);
+                receiverInfo.add(Integer.toString(remainingBalance));
+                receiverInfo.add(nowDataAndTime);
+                Extension.setXAttr(stub, redeemerBankToBalance.getValue0(), RECEIVER_KEY, receiverInfo.toString());
+                remainingBalance -= redeemerBankToBalance.getValue2();
+                if (remainingBalance == 0) {
+                    break;
+                }
+            }
+            else {
+                Extension.setXAttr(stub, redeemerBankToBalance.getValue0(), BALANCE_KEY,
+                        Integer.toString(redeemerBankToBalance.getValue2() - remainingBalance));
+
+                List<String> receiverInfo = new ArrayList<>();
+                receiverInfo.add(account);
+                receiverInfo.add(bank);
+                receiverInfo.add(Integer.toString(redeemerBankToBalance.getValue2() - remainingBalance));
+                receiverInfo.add(nowDataAndTime);
+                Extension.setXAttr(stub, redeemerBankToBalance.getValue0(), RECEIVER_KEY, receiverInfo.toString());
+                remainingBalance -= redeemerBankToBalance.getValue2();
+                break;
+            }
+        }
         return true;
     }
 }

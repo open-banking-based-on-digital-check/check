@@ -75,7 +75,7 @@ public class CheckMain extends Main {
         return check.send(stub, sender, receiver, Integer.parseInt(balance));
     }
 
-    private boolean redeem(ChaincodeStub stub, List<String> args) {
+    private boolean redeem(ChaincodeStub stub, List<String> args) throws IOException {
         if (args.size() != 4 || isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))
                 || isNullOrEmpty(args.get(2)) || isNullOrEmpty(args.get(3))) {
             throw new IllegalArgumentException(String.format(ARG_MESSAGE, "4"));
