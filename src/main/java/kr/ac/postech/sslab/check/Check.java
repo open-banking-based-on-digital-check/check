@@ -84,8 +84,8 @@ class Check {
     }
 
     boolean send(ChaincodeStub stub, String sender, String receiver, int balance) throws IOException {
-        List<String> senderIds = Extension.tokenIdsOf(stub, sender, BANK_KEY);
-        List<String> receiverIds = Extension.tokenIdsOf(stub, receiver, BANK_KEY);
+        List<String> senderIds = Extension.tokenIdsOf(stub, sender, CHECK_TYPE);
+        List<String> receiverIds = Extension.tokenIdsOf(stub, receiver, CHECK_TYPE);
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DATE_AND_TIME_FORMAT);
         LocalDateTime now = LocalDateTime.now();
@@ -300,6 +300,7 @@ class Check {
     }
 
     boolean redeem(ChaincodeStub stub, String redeemer, String bank, String account, int balance) {
+        List<String> redeemerIds = Extension.tokenIdsOf(stub, redeemer, CHECK_TYPE);
         return true;
     }
 }
