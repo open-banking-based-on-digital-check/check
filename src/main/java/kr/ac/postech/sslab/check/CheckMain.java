@@ -62,7 +62,7 @@ public class CheckMain extends Main {
         return check.issue(stub, bank, issuer, Integer.parseInt(balance));
     }
 
-    private boolean send(ChaincodeStub stub, List<String> args) {
+    private boolean send(ChaincodeStub stub, List<String> args) throws IOException {
         if (args.size() != 3 || isNullOrEmpty(args.get(0))
                 || isNullOrEmpty(args.get(1)) || isNullOrEmpty(args.get(2))) {
             throw new IllegalArgumentException(String.format(ARG_MESSAGE, "3"));
