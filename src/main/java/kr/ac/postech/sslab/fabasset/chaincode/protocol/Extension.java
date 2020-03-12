@@ -10,8 +10,7 @@ import org.hyperledger.fabric.shim.ChaincodeStub;
 import java.io.IOException;
 import java.util.*;
 
-import static kr.ac.postech.sslab.fabasset.chaincode.constant.Key.HASH_KEY;
-import static kr.ac.postech.sslab.fabasset.chaincode.constant.Key.PATH_KEY;
+import static kr.ac.postech.sslab.fabasset.chaincode.constant.Key.*;
 
 public class Extension {
     private static final String QUERY_OWNER_AND_TYPE = "{\"selector\":{\"owner\":\"%s\",\"type\":\"%s\"}}";
@@ -96,7 +95,7 @@ public class Extension {
             return false;
         }
 
-        if (!dest.containsKey(attribute)) {
+        if (!dest.containsKey(attribute) && !attribute.equals(ADMIN_KEY)) {
             String dataType = info.get(0);
             Object initialValue = DataTypeConversion.strToDataType(dataType, info.get(1));
             if (initialValue == null) {
