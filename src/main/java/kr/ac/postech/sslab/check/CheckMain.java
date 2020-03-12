@@ -59,7 +59,7 @@ public class CheckMain extends Main {
         String issuer = args.get(1);
         String balance = args.get(2);
 
-        return check.issue(stub, bank, issuer, Long.parseLong(balance));
+        return check.issue(stub, bank, issuer, Integer.parseInt(balance));
     }
 
     private boolean send(ChaincodeStub stub, List<String> args) {
@@ -72,7 +72,7 @@ public class CheckMain extends Main {
         String receiver = args.get(1);
         String balance = args.get(2);
 
-        return check.send(stub, sender, receiver, Long.parseLong(balance));
+        return check.send(stub, sender, receiver, Integer.parseInt(balance));
     }
 
     private boolean redeem(ChaincodeStub stub, List<String> args) {
@@ -86,7 +86,7 @@ public class CheckMain extends Main {
         String account = args.get(2);
         String balance = args.get(3);
 
-        return check.redeem(stub, redeemer, bank, account, Long.parseLong(balance));
+        return check.redeem(stub, redeemer, bank, account, Integer.parseInt(balance));
     }
     public static void main(String[] args) {
         new CheckMain().start(args);

@@ -3,6 +3,7 @@ package kr.ac.postech.sslab.check;
 import kr.ac.postech.sslab.fabasset.chaincode.protocol.ERC721;
 import kr.ac.postech.sslab.fabasset.chaincode.protocol.Extension;
 import org.hyperledger.fabric.shim.ChaincodeStub;
+
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ class Check {
 
     private static final String DATE_AND_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
 
-    boolean issue(ChaincodeStub stub, String bank, String issuer, long balance) throws IOException {
+    boolean issue(ChaincodeStub stub, String bank, String issuer, int balance) throws IOException {
         List<String> issuerIds = Extension.tokenIdsOf(stub, issuer, CHECK_TYPE);
 
         boolean hasBank = false;
@@ -50,7 +51,7 @@ class Check {
                 return false;
             }
 
-            long currentBalance = Long.parseLong(currentBalanceString);
+            int currentBalance = Integer.parseInt(currentBalanceString);
             currentBalance += balance;
             Extension.setXAttr(stub, id, BALANCE_KEY, Long.toString(currentBalance));
 
@@ -79,11 +80,11 @@ class Check {
         return true;
     }
 
-    boolean send(ChaincodeStub stub, String sender, String receiver, long balance) {
+    boolean send(ChaincodeStub stub, String sender, String receiver, int balance) {
         return true;
     }
 
-    boolean redeem(ChaincodeStub stub, String redeemer, String bank, String account, long balance) {
+    boolean redeem(ChaincodeStub stub, String redeemer, String bank, String account, int balance) {
         return true;
     }
 }
