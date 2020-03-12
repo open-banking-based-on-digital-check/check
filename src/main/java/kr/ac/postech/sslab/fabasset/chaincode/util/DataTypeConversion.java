@@ -54,6 +54,49 @@ public class DataTypeConversion {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public static String dataTypeToStr(String dataType, Object value) {
+        switch (dataType) {
+            case DataType.INTEGER:
+                return Integer.toString((int) value);
+
+            case DataType.DOUBLE:
+                return Double.toString((double) value);
+
+            case DataType.BYTE:
+                return Byte.toString((byte) value);
+
+            case DataType.STRING:
+                return (String) value;
+
+            case DataType.BOOLEAN:
+                return Boolean.toString((boolean) value);
+
+            case DataType.LIST_INTEGER:
+                List<Integer> integers = (List<Integer>) value;
+                return integers != null ? integers.toString() : null;
+
+            case DataType.LIST_DOUBLE:
+                List<Double> doubles = (List<Double>) value;
+                return doubles != null ? doubles.toString() : null;
+
+            case DataType.LIST_BYTE:
+                List<Byte> bytes = (List<Byte>) value;
+                return bytes != null ? bytes.toString() : null;
+
+            case DataType.LIST_STRING:
+                List<String> strings = (List<String>) value;
+                return strings != null ? strings.toString() : null;
+
+            case DataType.LIST_BOOLEAN:
+                List<Boolean> booleans = (List<Boolean>) value;
+                return booleans != null ? booleans.toString() : null;
+
+            default:
+                return null;
+        }
+    }
+
     private static List<Integer> toListInteger(String value) {
         List<Integer> integers = new ArrayList<>();
         if (value == null || value.equals(EMPTY_LIST)) {

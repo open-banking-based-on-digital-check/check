@@ -8,6 +8,7 @@ import kr.ac.postech.sslab.fabasset.chaincode.protocol.Extension;
 import kr.ac.postech.sslab.fabasset.chaincode.protocol.TokenTypeManagement;
 import kr.ac.postech.sslab.fabasset.chaincode.protocol.Default;
 import kr.ac.postech.sslab.fabasset.chaincode.protocol.ERC721;
+import kr.ac.postech.sslab.fabasset.chaincode.util.DataTypeConversion;
 import org.hyperledger.fabric.shim.ChaincodeBase;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.hyperledger.fabric.shim.ResponseUtils;
@@ -378,7 +379,11 @@ public class Main extends ChaincodeBase {
 
         String tokenId = args.get(0);
         String index = args.get(1);
-        String value = args.get(2);
+
+        TokenTypeManager manager = TokenTypeManager.load(stub);
+        List<String> info = manager.getAttribute(Default.getType(stub, tokenId), index);
+        String dataType = info.get(0);
+        Object value = DataTypeConversion.strToDataType(dataType, args.get(2));
 
         return Boolean.toString(Extension.setXAttr(stub, tokenId, index, value));
     }
@@ -392,7 +397,15 @@ public class Main extends ChaincodeBase {
         String tokenId = args.get(0);
         String index = args.get(1);
 
-        return Extension.getXAttr(stub, tokenId, index);
+        TokenTypeManager manager = TokenTypeManager.load(stub);
+        List<String> info = manager.getAttribute(Default.getType(stub, tokenId), index);
+
+        if (info.isEmpty()) {
+            return null;
+        }
+
+        Object value = Extension.getXAttr(stub, tokenId, index);
+        return DataTypeConversion.dataTypeToStr(info.get(0), value);
     }
 
     private String enrollTokenType(ChaincodeStub stub, List<String> args) throws IOException {

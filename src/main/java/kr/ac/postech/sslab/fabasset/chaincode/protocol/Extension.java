@@ -1,7 +1,6 @@
 package kr.ac.postech.sslab.fabasset.chaincode.protocol;
 
 import com.google.protobuf.ByteString;
-import kr.ac.postech.sslab.fabasset.chaincode.constant.DataType;
 import kr.ac.postech.sslab.fabasset.chaincode.manager.TokenManager;
 import kr.ac.postech.sslab.fabasset.chaincode.manager.TokenTypeManager;
 import kr.ac.postech.sslab.fabasset.chaincode.client.Address;
@@ -122,9 +121,9 @@ public class Extension {
         return uri.keySet().size() == 2 && uri.containsKey(PATH_KEY) && uri.containsKey(HASH_KEY);
     }
 
-    private static void eventExtensibleAttribute(ChaincodeStub stub, String id, String index, String value) {
+    private static void eventURI(ChaincodeStub stub, String id, String index, String value) {
         String message = String.format("Update attribute %s to %s in Token %s", index, value, id);
-        stub.setEvent("ExtensibleAttribute", ByteString.copyFromUtf8(message).toByteArray());
+        stub.setEvent("URI", ByteString.copyFromUtf8(message).toByteArray());
     }
 
     public static boolean setURI(ChaincodeStub stub, String id, String index, String value) throws IOException {
@@ -137,7 +136,7 @@ public class Extension {
         nft.setURI(index, value);
         nft.store(stub);
 
-        eventExtensibleAttribute(stub, id, index, value);
+        eventURI(stub, id, index, value);
 
         return false;
     }
@@ -152,84 +151,33 @@ public class Extension {
         return nft.getURI(index);
     }
 
-    public static boolean setXAttr(ChaincodeStub stub, String id, String index, String value) throws IOException {
+    private static void eventXAttr(ChaincodeStub stub, String id, String index, Object value) {
+        String message = String.format("Update attribute %s to %s in Token %s", index, String.valueOf(value), id);
+        stub.setEvent("XAttr", ByteString.copyFromUtf8(message).toByteArray());
+    }
+
+    public static boolean setXAttr(ChaincodeStub stub, String id, String index, Object value) throws IOException {
         TokenManager nft = TokenManager.load(stub, id);
         Map<String, Object> xattr = nft.getXAttr();
         if (!xattr.containsKey(index)) {
             return false;
         }
 
-        TokenTypeManager manager = TokenTypeManager.load(stub);
-        List<String> info = manager.getAttribute(nft.getType(), index);
-        String dataType = info.get(0);
-        Object object = DataTypeConversion.strToDataType(dataType, value);
-        if (object == null) {
-            return false;
-        }
-
-        nft.setXAttr(index, object);
+        nft.setXAttr(index, value);
         nft.store(stub);
 
-        eventExtensibleAttribute(stub, id, index, value);
+        eventXAttr(stub, id, index, value);
 
         return true;
     }
 
-    @SuppressWarnings("unchecked")
-    public static String getXAttr(ChaincodeStub stub, String tokenId, String index) throws IOException {
+    public static Object getXAttr(ChaincodeStub stub, String tokenId, String index) throws IOException {
         TokenManager nft = TokenManager.load(stub, tokenId);
         Map<String, Object> xattr = nft.getXAttr();
         if (!xattr.containsKey(index)) {
             return null;
         }
 
-        Object value = nft.getXAttr(index);
-
-        TokenTypeManager manager = TokenTypeManager.load(stub);
-        List<String> info = manager.getAttribute(nft.getType(), index);
-
-        if (info.isEmpty()) {
-            return null;
-        }
-
-        switch (info.get(0)) {
-            case DataType.INTEGER:
-                return Integer.toString((int) value);
-
-            case DataType.DOUBLE:
-                return Double.toString((double) value);
-
-            case DataType.BYTE:
-                return Byte.toString((byte) value);
-
-            case DataType.STRING:
-                return (String) value;
-
-            case DataType.BOOLEAN:
-                return Boolean.toString((boolean) value);
-
-            case DataType.LIST_INTEGER:
-                List<Integer> integers = (List<Integer>) value;
-                return integers != null ? integers.toString() : null;
-
-            case DataType.LIST_DOUBLE:
-                List<Double> doubles = (List<Double>) value;
-                return doubles != null ? doubles.toString() : null;
-
-            case DataType.LIST_BYTE:
-                List<Byte> bytes = (List<Byte>) value;
-                return bytes != null ? bytes.toString() : null;
-
-            case DataType.LIST_STRING:
-                List<String> strings = (List<String>) value;
-                return strings != null ? strings.toString() : null;
-
-            case DataType.LIST_BOOLEAN:
-                List<Boolean> booleans = (List<Boolean>) value;
-                return booleans != null ? booleans.toString() : null;
-
-            default:
-                return null;
-        }
+        return nft.getXAttr(index);
     }
 }
