@@ -15,22 +15,31 @@ class Check {
     private static final String CHECK_TYPE = "check";
 
     private static final String BANK_KEY = "bank";
-
     private static final String BALANCE_KEY = "balance";
-
     private static final String SENDER_KEY = "sender";
-
     private static final String RECEIVER_KEY = "receiver";
 
     private static final String DATE_AND_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
 
+    private String  getNowDateAndTime() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DATE_AND_TIME_FORMAT);
+        LocalDateTime now = LocalDateTime.now();
+        return dtf.format(now);
+    }
+
+    private void updateSender(ChaincodeStub stub, String sender, String balance) {
+
+    }
+
     boolean issue(ChaincodeStub stub, String bank, String issuer, int balance) throws IOException {
         List<String> issuerIds = Extension.tokenIdsOf(stub, issuer, CHECK_TYPE);
+
+        String nowDataAndTime = getNowDateAndTime();
 
         boolean hasBank = false;
         String id = null;
         for (String issuerId: issuerIds) {
-            String whichBank = Extension.getXAttr(stub, issuerId, BANK_KEY);
+            String whichBank = (String) Extension.getXAttr(stub, issuerId, BANK_KEY);
 
             if (whichBank == null) {
                 return false;
@@ -44,17 +53,8 @@ class Check {
             }
         }
 
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DATE_AND_TIME_FORMAT);
-        LocalDateTime now = LocalDateTime.now();
-        String nowDataAndTime = dtf.format(now);
-
         if (hasBank) {
-            String currentBalanceString = Extension.getXAttr(stub, id, BALANCE_KEY);
-            if (currentBalanceString == null) {
-                return false;
-            }
-
-            int currentBalance = Integer.parseInt(currentBalanceString);
+            int currentBalance = (int) Extension.getXAttr(stub, id, BALANCE_KEY);
             currentBalance += balance;
             Extension.setXAttr(stub, id, BALANCE_KEY, Integer.toString(currentBalance));
 
@@ -87,17 +87,11 @@ class Check {
         List<String> senderIds = Extension.tokenIdsOf(stub, sender, CHECK_TYPE);
         List<String> receiverIds = Extension.tokenIdsOf(stub, receiver, CHECK_TYPE);
 
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DATE_AND_TIME_FORMAT);
-        LocalDateTime now = LocalDateTime.now();
-        String nowDataAndTime = dtf.format(now);
+        String nowDataAndTime = getNowDateAndTime();
 
         int senderTotalBalance = 0;
         for (String senderId : senderIds) {
-            String senderBalanceString = Extension.getXAttr(stub, senderId, BALANCE_KEY);
-            if (senderBalanceString == null) {
-                return false;
-            }
-            int senderBalance = Integer.parseInt(senderBalanceString);
+            int senderBalance = (int) Extension.getXAttr(stub, senderId, BALANCE_KEY);
             senderTotalBalance += senderBalance;
         }
 
@@ -109,17 +103,12 @@ class Check {
         List<Triplet<String, String, Integer>> senderBankToBalances = new LinkedList<>();
 
         for (String senderId : senderIds) {
-            String senderBank = Extension.getXAttr(stub, senderId, BANK_KEY);
+            String senderBank = (String) Extension.getXAttr(stub, senderId, BANK_KEY);
             if (senderBank == null) {
                 return false;
             }
 
-            String senderBalanceString = Extension.getXAttr(stub, senderId, BALANCE_KEY);
-            if (senderBalanceString == null) {
-                return false;
-            }
-
-            int senderBalance = Integer.parseInt(senderBalanceString);
+            int senderBalance = (int) Extension.getXAttr(stub, senderId, BALANCE_KEY);
 
             senderBankToBalances.add(new Triplet<>(senderId, senderBank, senderBalance));
         }
@@ -129,17 +118,12 @@ class Check {
         List<Triplet<String, String, Integer>> receiverBankToBalances = new LinkedList<>();
 
         for (String receiverId : receiverIds) {
-            String receiverBank = Extension.getXAttr(stub, receiverId, BANK_KEY);
+            String receiverBank = (String) Extension.getXAttr(stub, receiverId, BANK_KEY);
             if (receiverBank == null) {
                 return false;
             }
 
-            String receiverBalanceString = Extension.getXAttr(stub, receiverId, BALANCE_KEY);
-            if (receiverBalanceString == null) {
-                return false;
-            }
-
-            int receiverBalance = Integer.parseInt(receiverBalanceString);
+            int receiverBalance = (int) Extension.getXAttr(stub, receiverId, BALANCE_KEY);
 
             receiverBankToBalances.add(new Triplet<>(receiverId, receiverBank, receiverBalance));
         }
@@ -302,17 +286,11 @@ class Check {
     boolean redeem(ChaincodeStub stub, String redeemer, String bank, String account, int balance) throws IOException {
         List<String> redeemerIds = Extension.tokenIdsOf(stub, redeemer, CHECK_TYPE);
 
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DATE_AND_TIME_FORMAT);
-        LocalDateTime now = LocalDateTime.now();
-        String nowDataAndTime = dtf.format(now);
+        String nowDataAndTime = getNowDateAndTime();
 
         int redeemerTotalBalance = 0;
         for (String redeemerId : redeemerIds) {
-            String redeemerBalanceString = Extension.getXAttr(stub, redeemerId, BALANCE_KEY);
-            if (redeemerBalanceString == null) {
-                return false;
-            }
-            int redeemerBalance = Integer.parseInt(redeemerBalanceString);
+            int redeemerBalance = (int) Extension.getXAttr(stub, redeemerId, BALANCE_KEY);
             redeemerTotalBalance += redeemerBalance;
         }
 
@@ -323,17 +301,12 @@ class Check {
         List<Triplet<String, String, Integer>> redeemerBankToBalances = new LinkedList<>();
 
         for (String redeemerId : redeemerIds) {
-            String redeemerBank = Extension.getXAttr(stub, redeemerId, BANK_KEY);
+            String redeemerBank = (String) Extension.getXAttr(stub, redeemerId, BANK_KEY);
             if (redeemerBank == null) {
                 return false;
             }
 
-            String redeemerBalanceString = Extension.getXAttr(stub, redeemerId, BALANCE_KEY);
-            if (redeemerBalanceString == null) {
-                return false;
-            }
-
-            int redeemerBalance = Integer.parseInt(redeemerBalanceString);
+            int redeemerBalance = (int) Extension.getXAttr(stub, redeemerId, BALANCE_KEY);
 
             redeemerBankToBalances.add(new Triplet<>(redeemerId, redeemerBank, redeemerBalance));
         }
