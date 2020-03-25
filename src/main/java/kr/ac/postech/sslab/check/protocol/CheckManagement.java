@@ -82,36 +82,33 @@ public class CheckManagement {
     }
 
     public static boolean merge(ChaincodeStub stub, String newTokenId, List<String> mergedTokenIds) throws IOException {
-        if (mergedTokenIds.size() != 2) {
+        if (mergedTokenIds.size() != 2 || stub.getStringState(mergedTokenIds.get(0)).length() == 0 || stub.getStringState(mergedTokenIds.get(1)).length() == 0) {
             return false;
         }
 
-        TokenManager[] nfts = new TokenManager[2];
         String[] guranteeBanks = new String[2];
-        int[] balances = new int[2];
-        for (int i = 0; i < nfts.length; i++) {
-            nfts[i] = TokenManager.load(stub, mergedTokenIds.get(i));
-            guranteeBanks[i] = (String) nfts[i].getXAttr(BANK_KEY);
-            balances[i] = (int) nfts[i].getXAttr(BALANCE_KEY);
-        }
-
+        guranteeBanks[0] = (String) Extension.getXAttr(stub, mergedTokenIds.get(0), BANK_KEY);
+        guranteeBanks[1] = (String) Extension.getXAttr(stub, mergedTokenIds.get(1), BANK_KEY);
         if (!guranteeBanks[0].equals(guranteeBanks[1])) {
             return false;
         }
 
+        int[] balances = new int[2];
+        balances[0] = (int) Extension.getXAttr(stub, mergedTokenIds.get(0), BALANCE_KEY);
+        balances[1] = (int) Extension.getXAttr(stub, mergedTokenIds.get(1), BALANCE_KEY);
         int totalBalance = balances[0] + balances[1];
-        String guranteedBank = guranteeBanks[0];
 
         Map<String, Object> xattr = new HashMap<>();
-        xattr.put(BANK_KEY, guranteedBank);
+        xattr.put(BANK_KEY, guranteeBanks[0]);
         xattr.put(BALANCE_KEY, totalBalance);
         xattr.put(PARENT_KEY, mergedTokenIds);
 
-        for (String mergedTokenId: mergedTokenIds) {
-            Default.burn(stub, mergedTokenId);
-        }
+        Extension.mint(stub, newTokenId, CHECK_TYPE, xattr, null);
 
-        return Extension.mint(stub, newTokenId, CHECK_TYPE, xattr, null);
+        Default.burn(stub, mergedTokenIds.get(0));
+        Default.burn(stub, mergedTokenIds.get(1));
+
+        return true;
     }
 
     public static boolean divide(ChaincodeStub stub, String id, List<String> newIds, List<Integer> balances) throws IOException {
