@@ -12,6 +12,11 @@ public class BankManagement {
     public static boolean registerBank(ChaincodeStub stub, String bank) throws IOException {
         BankManager bankManager = BankManager.load(stub);
         List<String> banks = bankManager.getBanks();
+
+        if (bankManager.hasBank(bank)) {
+            return false;
+        }
+
         banks.add(bank);
         bankManager.setBanks(banks);
         bankManager.store(stub);
