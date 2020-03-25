@@ -10,27 +10,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ERC721 {
-	private static final String QUERY_OWNER = "{\"selector\":{\"owner\":\"%s\"}}";
-
-	static void eventTransfer(ChaincodeStub stub, String from, String to, String tokenId) {
-		String message = String.format("Client %s transfers NFT %s to Client %s", from, tokenId, to);
+	static void eventTransfer(ChaincodeStub stub, String from, String to, String id) {
+		String message = String.format("Transfer %s: from %s to %s", id, from, to);
 		stub.setEvent("Transfer", ByteString.copyFromUtf8(message).toByteArray());
 	}
 
-	private static void eventApproval(ChaincodeStub stub, String owner, String approved, String tokenId) {
-		String message = String.format("Client %s approves NFT %s to Client %s", owner, tokenId, approved);
+	private static void eventApproval(ChaincodeStub stub, String owner, String approved, String id) {
+		String message = String.format("Approval %s: from %s to %s", id, owner, approved);
 		stub.setEvent("Approval", ByteString.copyFromUtf8(message).toByteArray());
 	}
 
 	private static void eventApprovalForAll(ChaincodeStub stub, String owner, String operator, boolean approved) {
-		String message = String.format("Client %s %s Client %s to be an operator",
-									owner, approved ? "enables" : "disables", operator);
+		String message = String.format("ApprovalForAll %b: from %s to %s", approved, owner, operator);
 		stub.setEvent("ApprovalForAll", ByteString.copyFromUtf8(message).toByteArray());
 	}
 
 	public static long balanceOf(ChaincodeStub stub, String owner) {
-		String query = String.format(QUERY_OWNER, owner);
-		return Default.queryByValues(stub, query).size();
+		return Default.tokenIdsOf(stub, owner).size();
 	}
 
 	public static String ownerOf(ChaincodeStub stub, String id) throws IOException {

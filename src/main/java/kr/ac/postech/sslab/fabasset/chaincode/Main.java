@@ -134,16 +134,16 @@ public class Main extends ChaincodeBase {
                     response = getXAttr(stub, args);
                     break;
 
+                case TOKEN_TYPES_OF_FUNCTION_NAME:
+                    response = tokenTypesOf(stub);
+                    break;
+
                 case ENROLL_TOKEN_TYPE_FUNCTION_NAME:
                     response = enrollTokenType(stub, args);
                     break;
 
                 case DROP_TOKEN_TYPE_FUNCTION_NAME:
                     response = dropTokenType(stub, args);
-                    break;
-
-                case TOKEN_TYPES_OF_FUNCTION_NAME:
-                    response = tokenTypesOf(stub);
                     break;
 
                 case RETRIEVE_TOKEN_TYPE_FUNCTION_NAME:
@@ -171,6 +171,7 @@ public class Main extends ChaincodeBase {
             }
 
             String owner = args.get(0);
+
             return Long.toString(ERC721.balanceOf(stub, owner));
         } else if (args.size() == 2) {
             if (isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))) {
@@ -191,39 +192,37 @@ public class Main extends ChaincodeBase {
             throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1"));
         }
 
-        String tokenId = args.get(0);
+        String id = args.get(0);
 
-        return ERC721.ownerOf(stub, tokenId);
+        return ERC721.ownerOf(stub, id);
     }
 
     private String transferFrom(ChaincodeStub stub, List<String> args) throws IOException {
-        if (args.size() != 3 || isNullOrEmpty(args.get(0))
-                || isNullOrEmpty(args.get(1)) || isNullOrEmpty(args.get(2))) {
+        if (args.size() != 3 || isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1)) || isNullOrEmpty(args.get(2))) {
             throw new IllegalArgumentException(String.format(ARG_MESSAGE, "3"));
         }
 
         String from = args.get(0);
         String to = args.get(1);
-        String tokenId = args.get(2);
+        String id = args.get(2);
 
-        return Boolean.toString(ERC721.transferFrom(stub, from, to, tokenId));
+        return Boolean.toString(ERC721.transferFrom(stub, from, to, id));
     }
 
     private String approve(ChaincodeStub stub, List<String> args) throws IOException {
-        if (args.size() != 2 || isNullOrEmpty(args.get(0))
-                || isNullOrEmpty(args.get(1))) {
+        if (args.size() != 2 || isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))) {
             throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2"));
         }
 
         String approved = args.get(0);
-        String tokenId = args.get(1);
+        String id = args.get(1);
 
-        return Boolean.toString(ERC721.approve(stub, approved, tokenId));
+        return Boolean.toString(ERC721.approve(stub, approved, id));
     }
 
     private String setApprovalForAll(ChaincodeStub stub, List<String> args) throws IOException {
         if (args.size() != 2 || isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))) {
-            throw new IllegalArgumentException(String.format(ARG_MESSAGE, "3"));
+            throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2"));
         }
 
         String operator = args.get(0);
@@ -237,9 +236,9 @@ public class Main extends ChaincodeBase {
             throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1"));
         }
 
-        String tokenId = args.get(0);
+        String id = args.get(0);
 
-        return ERC721.getApproved(stub, tokenId);
+        return ERC721.getApproved(stub, id);
     }
 
     private String isApprovedForAll(ChaincodeStub stub, List<String> args) throws IOException {
@@ -259,23 +258,23 @@ public class Main extends ChaincodeBase {
                 throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1"));
             }
 
-            String tokenId = args.get(0);
-            return Boolean.toString(Default.mint(stub, tokenId));
+            String id = args.get(0);
+
+            return Boolean.toString(Default.mint(stub, id));
         }
         else if (args.size() == 4) {
-            if (isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))
-                    || isNullOrEmpty(args.get(2)) || isNullOrEmpty(args.get(3))) {
+            if (isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1)) || isNullOrEmpty(args.get(2)) || isNullOrEmpty(args.get(3))) {
                 throw new IllegalArgumentException(String.format(ARG_MESSAGE, "4"));
             }
 
-            String tokenId = args.get(0);
+            String id = args.get(0);
             String type = args.get(1);
             Map<String, Object> xattr =
-                    objectMapper.readValue(args.get(2), new TypeReference<HashMap<String, Object>>(){});
+                    objectMapper.readValue(args.get(2), new TypeReference<HashMap<String, Object>>() {});
             Map<String, String> uri =
-                    objectMapper.readValue(args.get(3), new TypeReference<HashMap<String, String>>(){});
+                    objectMapper.readValue(args.get(3), new TypeReference<HashMap<String, String>>() {});
 
-            return Boolean.toString(Extension.mint(stub, tokenId, type, xattr, uri));
+            return Boolean.toString(Extension.mint(stub, id, type, xattr, uri));
         }
 
         throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1 or 4"));
@@ -286,9 +285,9 @@ public class Main extends ChaincodeBase {
             throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1"));
         }
 
-        String tokenId = args.get(0);
+        String id = args.get(0);
 
-        return Boolean.toString(Default.burn(stub, tokenId));
+        return Boolean.toString(Default.burn(stub, id));
     }
 
     private String getType(ChaincodeStub stub, List<String> args) throws IOException {
@@ -296,21 +295,20 @@ public class Main extends ChaincodeBase {
             throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1"));
         }
 
-        String tokenId = args.get(0);
+        String id = args.get(0);
 
-        return Default.getType(stub, tokenId);
+        return Default.getType(stub, id);
     }
 
-    private String tokenIdsOf(ChaincodeStub stub, List<String> args) throws IOException {
-        List<String> tokenIds;
-
+    private String tokenIdsOf(ChaincodeStub stub, List<String> args) {
         if (args.size() == 1) {
             if (isNullOrEmpty(args.get(0))) {
                 throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1"));
             }
 
             String owner = args.get(0);
-            tokenIds = Default.tokenIdsOf(stub, owner);
+
+            return Default.tokenIdsOf(stub, owner).toString();
         }
         else if (args.size() == 2) {
             if (isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))) {
@@ -319,13 +317,11 @@ public class Main extends ChaincodeBase {
 
             String owner = args.get(0);
             String type = args.get(1);
-            tokenIds = Extension.tokenIdsOf(stub, owner, type);
-        }
-        else {
-            throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1 or 2"));
+
+            return Extension.tokenIdsOf(stub, owner, type).toString();
         }
 
-        return tokenIds.toString();
+        throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1 or 2"));
     }
 
     private String query(ChaincodeStub stub, List<String> args) throws IOException {
@@ -333,9 +329,9 @@ public class Main extends ChaincodeBase {
             throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1"));
         }
 
-        String tokenId = args.get(0);
+        String id = args.get(0);
 
-        return Default.query(stub, tokenId);
+        return Default.query(stub, id);
     }
 
     private String history(ChaincodeStub stub, List<String> args) {
@@ -343,69 +339,126 @@ public class Main extends ChaincodeBase {
             throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1"));
         }
 
-        String tokenId = args.get(0);
+        String id = args.get(0);
 
-        return Default.history(stub, tokenId).toString();
+        return Default.history(stub, id).toString();
     }
 
     private String setURI(ChaincodeStub stub, List<String> args) throws IOException {
-        if (args.size() != 3 || isNullOrEmpty(args.get(0))
-                || isNullOrEmpty(args.get(1)) || isNullOrEmpty(args.get(2))) {
-            throw new IllegalArgumentException(String.format(ARG_MESSAGE, "3"));
+        if (args.size() == 2) {
+            if (isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))) {
+                throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2"));
+            }
+            String id = args.get(0);
+            Map<String, String> uri =
+                    objectMapper.readValue(args.get(1), new TypeReference<HashMap<String, String>>() {});
+
+            return Boolean.toString(Extension.setURI(stub, id, uri));
+        }
+        else if (args.size() == 3) {
+            if (isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1)) || isNullOrEmpty(args.get(2))) {
+                throw new IllegalArgumentException(String.format(ARG_MESSAGE, "3"));
+            }
+
+            String id = args.get(0);
+            String index = args.get(1);
+            String value = args.get(2);
+
+            return Boolean.toString(Extension.setURI(stub, id, index, value));
+
         }
 
-        String tokenId = args.get(0);
-        String index = args.get(1);
-        String value = args.get(2);
-
-        return Boolean.toString(Extension.setURI(stub, tokenId, index, value));
+        throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2 or 3"));
     }
 
     private String getURI(ChaincodeStub stub, List<String> args) throws IOException {
-        if (args.size() != 2 || isNullOrEmpty(args.get(0))
-                || isNullOrEmpty(args.get(1))) {
-            throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2"));
+        if (args.size() == 1) {
+            if (isNullOrEmpty(args.get(0))) {
+                throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1"));
+            }
+
+            String id = args.get(0);
+
+            return objectMapper.writeValueAsString(Extension.getURI(stub, id));
         }
-        String tokenId = args.get(0);
-        String index = args.get(1);
-        return Extension.getURI(stub, tokenId, index);
+        else if (args.size() == 2) {
+            if (isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))) {
+                throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2"));
+            }
+
+            String id = args.get(0);
+            String index = args.get(1);
+
+            return Extension.getURI(stub, id, index);
+        }
+
+        throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1 or 2"));
     }
 
     private String setXAttr(ChaincodeStub stub, List<String> args) throws IOException {
-        if (args.size() != 3 || isNullOrEmpty(args.get(0))
-                || isNullOrEmpty(args.get(1)) || isNullOrEmpty(args.get(2))) {
-            throw new IllegalArgumentException(String.format(ARG_MESSAGE, "3"));
+        if (args.size() == 2) {
+            if (isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))) {
+                throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2"));
+            }
+
+            String id = args.get(0);
+            Map<String, Object> xattr =
+                    objectMapper.readValue(args.get(1), new TypeReference<HashMap<String, Object>>() {});
+
+            return Boolean.toString(Extension.setXAttr(stub, id, xattr));
+        }
+        else if (args.size() == 3) {
+            if (isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1)) || isNullOrEmpty(args.get(2))) {
+                throw new IllegalArgumentException(String.format(ARG_MESSAGE, "3"));
+            }
+
+            String id = args.get(0);
+            String index = args.get(1);
+
+            TokenTypeManager manager = TokenTypeManager.load(stub);
+            List<String> info = manager.getAttribute(Default.getType(stub, id), index);
+            String dataType = info.get(0);
+            Object value = DataTypeConversion.strToDataType(dataType, args.get(2));
+
+            return Boolean.toString(Extension.setXAttr(stub, id, index, value));
         }
 
-        String tokenId = args.get(0);
-        String index = args.get(1);
-
-        TokenTypeManager manager = TokenTypeManager.load(stub);
-        List<String> info = manager.getAttribute(Default.getType(stub, tokenId), index);
-        String dataType = info.get(0);
-        Object value = DataTypeConversion.strToDataType(dataType, args.get(2));
-
-        return Boolean.toString(Extension.setXAttr(stub, tokenId, index, value));
+        throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2 or 3"));
     }
 
     private String getXAttr(ChaincodeStub stub, List<String> args)  throws IOException {
-        if (args.size() != 2 || isNullOrEmpty(args.get(0))
-                || isNullOrEmpty(args.get(1))) {
-            throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2"));
+        if (args.size() == 1) {
+            if (isNullOrEmpty(args.get(0))) {
+                throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1"));
+            }
+
+            String id = args.get(0);
+
+            return objectMapper.writeValueAsString(Extension.getXAttr(stub, id));
+        }
+        else if(args.size() == 2) {
+            if (isNullOrEmpty(args.get(0)) || isNullOrEmpty(args.get(1))) {
+                throw new IllegalArgumentException(String.format(ARG_MESSAGE, "2"));
+            }
+
+            String id = args.get(0);
+            String index = args.get(1);
+
+            Object value = Extension.getXAttr(stub, id, index);
+
+            TokenTypeManager manager = TokenTypeManager.load(stub);
+            List<String> info = manager.getAttribute(Default.getType(stub, id), index);
+            String dataType = info.get(0);
+
+            return DataTypeConversion.dataTypeToStr(dataType, value);
         }
 
-        String tokenId = args.get(0);
-        String index = args.get(1);
+        throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1 or 2"));
+    }
 
-        TokenTypeManager manager = TokenTypeManager.load(stub);
-        List<String> info = manager.getAttribute(Default.getType(stub, tokenId), index);
-
-        if (info.isEmpty()) {
-            return null;
-        }
-
-        Object value = Extension.getXAttr(stub, tokenId, index);
-        return DataTypeConversion.dataTypeToStr(info.get(0), value);
+    private String tokenTypesOf(ChaincodeStub stub) throws IOException {
+        List<String> tokenTypes = TokenTypeManagement.tokenTypesOf(stub);
+        return tokenTypes.toString();
     }
 
     private String enrollTokenType(ChaincodeStub stub, List<String> args) throws IOException {
@@ -430,11 +483,6 @@ public class Main extends ChaincodeBase {
         return Boolean.toString(TokenTypeManagement.dropTokenType(stub, type));
     }
 
-    private String tokenTypesOf(ChaincodeStub stub) throws IOException {
-        List<String> tokenTypes = TokenTypeManagement.tokenTypesOf(stub);
-        return tokenTypes.toString();
-    }
-
     private String retrieveTokenType(ChaincodeStub stub, List<String> args) throws IOException {
         if (args.size() != 1 || isNullOrEmpty(args.get(0))) {
             throw new IllegalArgumentException(String.format(ARG_MESSAGE, "1"));
@@ -454,7 +502,11 @@ public class Main extends ChaincodeBase {
         String tokenType = args.get(0);
         String attribute = args.get(1);
 
-        return TokenTypeManagement.retrieveAttributeOfTokenType(stub, tokenType, attribute).toString();
+        List<String> info = TokenTypeManagement.retrieveAttributeOfTokenType(stub, tokenType, attribute);
+        if (info == null || info.size() == 0) {
+            return null;
+        }
+        return info.toString();
     }
 
     public static void main(String[] args) {

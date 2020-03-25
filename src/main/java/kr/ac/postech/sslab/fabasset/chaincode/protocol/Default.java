@@ -9,13 +9,11 @@ import org.hyperledger.fabric.shim.ledger.KeyValue;
 import org.hyperledger.fabric.shim.ledger.QueryResultsIterator;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+
+import static kr.ac.postech.sslab.fabasset.chaincode.constant.Key.OWNER_KEY;
 
 public class Default {
-    private static final String QUERY_OWNER = "{\"selector\":{\"owner\":\"%s\"}}";
-
     private Default() {}
 
     public static boolean mint(ChaincodeStub stub, String id) throws JsonProcessingException {
@@ -62,24 +60,14 @@ public class Default {
     }
 
     public static List<String> tokenIdsOf(ChaincodeStub stub, String owner) {
-        String query = String.format(QUERY_OWNER, owner);
-        return queryByValues(stub, query);
+        Map<String, Object> attribute = new HashMap<>();
+        attribute.put(OWNER_KEY, owner);
+        return queryByValues(stub, attribute);
     }
 
     public static String query(ChaincodeStub stub, String id) throws IOException {
         TokenManager nft = TokenManager.load(stub, id);
         return nft.toJSONString();
-    }
-
-    public static List<String> queryByValues(ChaincodeStub stub, String query) {
-        List<String> ids = new ArrayList<>();
-        QueryResultsIterator<KeyValue> resultsIterator = stub.getQueryResult(query);
-        while(resultsIterator.iterator().hasNext()) {
-            String id = resultsIterator.iterator().next().getKey();
-            ids.add(id);
-        }
-
-        return ids;
     }
 
     public static List<String> history(ChaincodeStub stub, String id) {
@@ -90,5 +78,25 @@ public class Default {
         }
 
         return histories;
+    }
+
+    static List<String> queryByValues(ChaincodeStub stub, Map<String, Object> attributes) {
+        List<String> ids = new ArrayList<>();
+
+        StringBuilder query = new StringBuilder("{\"selector\":{");
+        for (String key: attributes.keySet()) {
+            query.append("\"").append(key).append("\":\"").append(attributes.get(key)).append("\",");
+        }
+
+        query.deleteCharAt(query.length() - 1);
+        query.append("}}");
+
+        QueryResultsIterator<KeyValue> resultsIterator = stub.getQueryResult(query.toString());
+        while(resultsIterator.iterator().hasNext()) {
+            String id = resultsIterator.iterator().next().getKey();
+            ids.add(id);
+        }
+
+        return ids;
     }
 }

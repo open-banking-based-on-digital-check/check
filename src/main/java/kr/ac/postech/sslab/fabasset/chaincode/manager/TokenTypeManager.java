@@ -3,7 +3,6 @@ package kr.ac.postech.sslab.fabasset.chaincode.manager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.ac.postech.sslab.fabasset.chaincode.constant.Key;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 
 import java.io.IOException;
@@ -47,7 +46,7 @@ public class TokenTypeManager {
         this.table = table;
     }
 
-    public boolean hashType(String type) {
+    public boolean hasType(String type) {
         return table.containsKey(type);
     }
 
@@ -55,7 +54,7 @@ public class TokenTypeManager {
         table.put(type, attributes);
     }
 
-    public void deleteType(String type) throws JsonProcessingException {
+    public void deleteType(String type) {
         table.remove(type);
     }
 
