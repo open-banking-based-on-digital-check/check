@@ -44,17 +44,18 @@ public class CheckManagement {
         }
 
         for (Map.Entry<String, List<String>> attribute: attributes.entrySet()) {
+            String attributeName = attribute.getKey();
             List<String> info = attribute.getValue();
             String dataType = info.get(0);
-            String name = info.get(1);
+            String initialValueString = info.get(1);
 
-            if (!xattr.containsKey(name) && !name.equals(ADMIN_KEY)) {
-                Object initialValue = DataTypeConversion.strToDataType(dataType, name);
+            if (!xattr.containsKey(attributeName) && !attributeName.equals(ADMIN_KEY)) {
+                Object initialValue = DataTypeConversion.strToDataType(dataType, initialValueString);
                 if (initialValue == null) {
                     return false;
                 }
 
-                xattr.put(name, initialValue);
+                xattr.put(attributeName, initialValue);
             }
         }
 
