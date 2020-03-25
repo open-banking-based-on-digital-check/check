@@ -114,13 +114,18 @@ public class CheckManagement {
         return Extension.mint(stub, newTokenId, CHECK_TYPE, xattr, null);
     }
 
-    public static boolean divide(ChaincodeStub stub, String id, List<String> newIds, List<String> balances) throws IOException {
+    public static boolean divide(ChaincodeStub stub, String id, List<String> newIds, List<Integer> balances) throws IOException {
         if (newIds.size() != 2 || balances.size() != 2) {
             return false;
         }
 
         TokenManager nft = TokenManager.load(stub, id);
         String guranteedBank = (String) nft.getXAttr(BANK_KEY);
+        int balance = (int) nft.getXAttr(BALANCE_KEY);
+
+        if (balance != balances.get(0) + balances.get(1)) {
+            return false;
+        }
 
         for (int i = 0; i < 2; i++) {
             Map<String, Object> xattr = new HashMap<>();

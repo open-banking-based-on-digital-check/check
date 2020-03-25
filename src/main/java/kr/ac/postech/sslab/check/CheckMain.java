@@ -122,7 +122,12 @@ public class CheckMain extends Main {
         String newIdsString = args.get(1);
         List<String> newIds = new ArrayList<>(toList(newIdsString));
         String balancesString = args.get(2);
-        List<String> balances = new ArrayList<>(toList(balancesString));
+        List<String> strings = new ArrayList<>(toList(balancesString));
+        List<Integer> balances = new ArrayList<>();
+        for (String string: strings) {
+            int integer = Integer.parseInt(string);
+            balances.add(integer);
+        }
 
         return CheckManagement.divide(stub, id, newIds, balances);
     }
